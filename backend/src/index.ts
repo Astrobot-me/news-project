@@ -1,11 +1,23 @@
 import app from "./app.js";
+import connectDb from "./database.js";
 
 
 
-const port = process.env.SERVER_PORT || 9000; 
+const PORT = process.env.SERVER_PORT || 9000; 
 
 
-app.listen(port, () => { 
+connectDb().then(()=>{
+
+    app.listen(PORT,()=>{
+        console.log(`App is Live on http://localhost:${PORT}`)
+    })
+    
+
+}).catch((error : any)=>{
+    console.log(error);
+})
+
+app.listen(PORT, () => { 
 
     console.log("Server started on Port")
 })

@@ -7,4 +7,4 @@ router.get('/top-headlines', getTopHeadlines);
 router.get('/search', getArticlesByQuery);
 router.post('/id/:id', getArticleById);
 
-export default router;
+export { router }; 
