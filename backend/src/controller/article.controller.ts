@@ -57,3 +57,25 @@ export const getArticleById = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Failed to fetch article by ID' });
     }
 };
+
+
+export const getArticlesByTags = async (req: Request, res: Response) => {
+    const { tags } = req.body;
+    if (!Array.isArray(tags) || tags.length === 0) {
+        return res.status(400).json({ error: 'Tags array is required in request body' });
+    }
+    try {
+        const tagQuery = tags.map(tag => `"${tag}"`).join(' OR ');
+        const response = await axios.get(`${GUARDIAN_BASE_URL}/search`, {
+            params: {
+                'api-key': GUARDIAN_API_KEY,
+                'q': tagQuery,
+                'show-fields': 'all',
+                'page-size': 10,
+            },
+        });
+        res.json(response.data.response.results);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch articles by tags' });
+    }
+};
