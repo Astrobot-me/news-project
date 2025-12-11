@@ -62,7 +62,11 @@ export const getArticlesByQuery = async (req: Request, res: Response) => {
 };
 
 export const getArticleById = async (req: Request, res: Response) => {
-    const { id } = req.params;
+    let { id } = req.query;
+    // Decode URI component and replace %2F with /
+    id = decodeURIComponent(id as string).replace(/%2F/g, '/');
+
+    console.log("Id", id)
     if (!id) {
         return res.status(400).json({ error: 'Article ID is required' });
     }

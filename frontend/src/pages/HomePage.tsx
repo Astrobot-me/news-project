@@ -1,103 +1,107 @@
-import {Link} from "react-router"
+import React, { useEffect, useState } from "react"
+import { Link } from "react-router"
+import axios from "axios"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { useState } from "react"
 import Header from "@/components/Header"
+import Footer from "@/components/Footer"
 import { Search } from "lucide-react"
+import { BASE_URL } from "@/constant"
 
-const articles = [
-  {
-    id: "1",
-    title: "The Future of Web Development",
-    description: "Exploring the emerging trends and technologies that will shape web development in 2025.",
-    excerpt:
-      "Web development is evolving rapidly with new frameworks, tools, and practices emerging constantly. In this article, we explore what the future holds for developers.",
-    author: "Sarah Chen",
-    date: "Dec 10, 2025",
-    category: "All",
-    readTime: "8 min read",
-    image: "/modern-web-development-interface.jpg",
-  },
-  {
-    id: "2",
-    title: "Mastering React Hooks",
-    description: "A comprehensive guide to understanding and using React Hooks effectively in your applications.",
-    excerpt:
-      "React Hooks have revolutionized how we write components. Learn the best practices and advanced techniques for using hooks in your projects.",
-    author: "Alex Rodriguez",
-    date: "Dec 8, 2025",
-    category: "React",
-    readTime: "12 min read",
-    image: "/react-code-development.jpg",
-  },
-  {
-    id: "3",
-    title: "Design Systems That Scale",
-    description: "Building and maintaining design systems that grow with your organization.",
-    excerpt:
-      "Design systems are crucial for maintaining consistency at scale. This guide covers the principles and practices for building systems that evolve with your needs.",
-    author: "Emma Wilson",
-    date: "Dec 5, 2025",
-    category: "CSS",
-    readTime: "10 min read",
-    image: "/design-system-components.png",
-  },
-  {
-    id: "4",
-    title: "Nextjs 16: What's New",
-    description: "A deep dive into the latest features and improvements in Next.js 16.",
-    excerpt:
-      "Next.js 16 brings significant improvements to performance, caching, and developer experience. Let's explore what's new in this release.",
-    author: "James Park",
-    date: "Dec 3, 2025",
-    category: "Next.js",
-    readTime: "9 min read",
-    image: "/nextjs-framework.jpg",
-  },
-  {
-    id: "5",
-    title: "TypeScript Best Practices",
-    description: "Writing type-safe TypeScript code that scales with your application.",
-    excerpt:
-      "TypeScript helps you write more reliable code. Discover the best practices for leveraging TypeScript's powerful type system.",
-    author: "Lisa Zhang",
-    date: "Nov 30, 2025",
-    category: "JavaScript",
-    readTime: "11 min read",
-    image: "/typescript-code.png",
-  },
-  {
-    id: "6",
-    title: "Performance Optimization Strategies",
-    description: "Techniques for making your web applications faster and more efficient.",
-    excerpt:
-      "Performance matters. Learn proven strategies for optimizing your applications and improving user experience.",
-    author: "Michael Brown",
-    date: "Nov 28, 2025",
-    category: "TailwindCSS",
-    readTime: "7 min read",
-    image: "/performance-metrics-dashboard.png",
-  },
-]
+interface Article {
+  id: string;
+  title: string;
+  description: string;
+  excerpt: string;
+  author: string;
+  date: string;
+  category: string;
+  readTime: string;
+  image: string | null | undefined;
+}
 
-const filters = ["All", "Next.js", "CSS", "JavaScript", "TailwindCSS"]
+
+const filters = ["All", "Next.js", "CSS", "JavaScript", "TailwindCSS", "Technology"]
+
+
+function normalizeItem(item: any) {
+  if (!item) return null
+
+
+  if (item.title && item.excerpt) return item
+
+
+  const fields = item.fields || {}
+  return {
+    id: item.id,
+    title: item.webTitle,
+    description: fields.trailText || fields.standfirst || item.webTitle || "",
+    excerpt: (fields.trailText || fields.standfirst || item.fields?.bodyText || "").replace(/<[^>]*>/g, "").slice(0, 220),
+    author: fields.byline || item.byline || fields.bylineHtml || "Unknown",
+    date: item.webPublicationDate ? new Date(item.webPublicationDate).toLocaleDateString() : item.date || "",
+    category: item.sectionName || item.category || "Technology",
+    readTime: Math.max(1, Math.round((fields.wordcount ? Number(fields.wordcount) : 600) / 200)) + " min read",
+    image: fields.thumbnail
+  }
+}
 
 export default function HomePage() {
-  const [selectedFilter, setSelectedFilter] = useState("All")
+  const [selectedFilter, setSelectedFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("")
+  const [articles, setArticles] = useState<Article[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+
+
+
+    async function fetchTopHeadlines() {
+      setLoading(true)
+      setError(null)
+      try {
+        const resp = await axios.get(`${BASE_URL}/api/articles/top-headlines`)
+
+        console.log("Res", resp)
+        // Expect backend to return an array in resp.data. Adjust as necessary.
+        const raw = resp.data
+
+        const normalized = raw
+          .map(normalizeItem)
+          .filter(Boolean)
+
+        if (!cancelled) setArticles(normalized)
+      } catch (err) {
+        console.error("Failed to fetch top headlines:", err)
+        if (!cancelled) setError(err?.message || "Failed to load articles")
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+
+    fetchTopHeadlines()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const filteredArticles = articles.filter((article) => {
     const matchesFilter = selectedFilter === "All" || article.category === selectedFilter
+    const q = searchQuery.trim().toLowerCase()
     const matchesSearch =
-      article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.description.toLowerCase().includes(searchQuery.toLowerCase())
+      q === "" ||
+      (article.title || "").toLowerCase().includes(q) ||
+      (article.description || "").toLowerCase().includes(q) ||
+      (article.excerpt || "").toLowerCase().includes(q)
     return matchesFilter && matchesSearch
   })
 
   return (
     <div className="min-h-screen bg-background">
-      <Header/>
-      
+      <Header />
+
       {/* Hero Section */}
       <section className="bg-linear-to-b from-primary/10 to-background py-12 md:py-16">
         <div className="max-w-6xl mx-auto px-4 text-center">
@@ -128,11 +132,10 @@ export default function HomePage() {
             <button
               key={filter}
               onClick={() => setSelectedFilter(filter)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                selectedFilter === filter
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedFilter === filter
                   ? "bg-primary text-primary-foreground"
                   : "bg-background text-foreground border border-border hover:border-primary/50"
-              }`}
+                }`}
             >
               {filter}
             </button>
@@ -140,10 +143,14 @@ export default function HomePage() {
         </div>
 
         <div className="border border-dashed border-border rounded-lg p-8">
-          {filteredArticles.length > 0 ? (
+          {loading ? (
+            <div className="py-16 text-center">Loading latest headlines…</div>
+          ) : error ? (
+            <div className="py-16 text-center text-red-500">Error: {error}</div>
+          ) : filteredArticles.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredArticles.map((article) => (
-                <Link key={article.id} to={`/article/${article.id}`}>
+                <Link key={article.id} to={`/article/id/${encodeURIComponent(article.id)}`}>
                   <Card className="h-full hover:shadow-lg transition-all duration-300 hover:border-primary/50 cursor-pointer group">
                     <div className="relative overflow-hidden bg-muted h-48">
                       <img
@@ -165,7 +172,7 @@ export default function HomePage() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        <p className="text-sm text-muted-foreground line-clamp-2">{article.excerpt}</p>
+
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
                           <span>{article.author}</span>
                           <span>{article.readTime}</span>
@@ -186,8 +193,7 @@ export default function HomePage() {
         </div>
       </main>
 
-      {/* Footer */}
-     
+      <Footer />
     </div>
   )
 }

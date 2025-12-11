@@ -129,3 +129,10 @@ export const registerUser = asyncHandler(async (req, res) => {
 
     return; 
 });
+
+
+// To save an Article 
+
+
+
+// To save an Read Article or Mark as Read 
