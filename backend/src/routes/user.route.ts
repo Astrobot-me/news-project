@@ -1,18 +1,21 @@
 import { Router, type Request, type Response } from 'express';
-import { 
-    authenticateUser ,
-    getUserDetails, 
-    registerUser
-} from '../controller/user.controller.js';
+
+import { protect } from '../middleware/authMiddleware.js';
+import { getReadArticles, getSavedArticles, saveArticle, saveReadArticle } from '../controller/user.controller.js';
 
 
 const router = Router(); 
 
-router.post("/login", authenticateUser); 
-router.post("/register", registerUser); 
+router
+.route("/save-article",)
+.post(saveArticle)
+.get(getSavedArticles)
 
-//Todo: protect this route
-router.get("/getuser", getUserDetails)
+
+router
+.route("/read-article",)
+.post(saveReadArticle)
+.get(getReadArticles)
 
 
 export { router }

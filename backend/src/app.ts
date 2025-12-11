@@ -1,5 +1,6 @@
 import express from 'express'; 
 import { router as ArticleRouter} from './routes/article.route.js';
+import { router as AuthRouter } from './routes/auth.route.js';
 import { router as UserRouter } from './routes/user.route.js';
 import morgan from 'morgan'
 import { protect } from './middleware/authMiddleware.js';
@@ -17,8 +18,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(morgan("dev"))
 
-app.use("/api/auth", UserRouter)
+app.use("/api/auth", AuthRouter)
 app.use("/api/articles", ArticleRouter)
+app.use("/api/user", UserRouter)
 
 
 

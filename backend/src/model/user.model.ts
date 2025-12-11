@@ -9,7 +9,7 @@ export interface UserType extends Document {
 }
 
 
-interface SavedArticleType extends Document { 
+export interface SavedArticleType extends Document { 
     article_id: string; 
     timestamp: Date;
 }
@@ -26,7 +26,7 @@ const SavedArticleSchema = new Schema<SavedArticleType>({
     }
 });
 
-interface ReadArticleType extends Document { 
+export interface ReadArticleType extends Document { 
     article_id: string; 
     timestamp: Date;
 }
