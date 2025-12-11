@@ -21,7 +21,7 @@ export const getTopHeadlines = async (req: Request, res: Response) => {
                 'api-key': GUARDIAN_API_KEY, 
                 'order-by': 'newest',
                 'show-fields': 'all',
-                'page-size': 10,
+                'page-size': 25,
             },
         });
         res.status(200).json(response.data.response.results);
@@ -101,7 +101,7 @@ export const getArticlesByTags = async (req: Request, res: Response) => {
                 'api-key': GUARDIAN_API_KEY,
                 'q': tagQuery,
                 'show-fields': 'all',
-                'page-size': 10,
+                'page-size': 20,
             },
         });
         res.json(response.data.response.results);
