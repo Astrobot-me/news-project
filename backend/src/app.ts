@@ -9,8 +9,10 @@ import cors from 'cors'
 const app = express() 
 
 
+
+
 app.use(cors({ 
-    origin: "http://localhost:5173" 
+    origin: ["http://localhost:5173", "*"]
 }))
 
 app.use(express.json()); 
@@ -21,6 +23,37 @@ app.use(morgan("dev"))
 app.use("/api/auth", AuthRouter)
 app.use("/api/articles", ArticleRouter)
 app.use("/api/user", UserRouter)
+
+
+app.get("/", (req, res) => {
+    const uptimeSec = process.uptime();
+    const hours = Math.floor(uptimeSec / 3600);
+    const minutes = Math.floor((uptimeSec % 3600) / 60);
+    const seconds = Math.floor(uptimeSec % 60);
+
+    const memoryUsage = process.memoryUsage();
+    const formatMB = (bytes: number) => `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+
+    res.status(200).json({
+        status: "ok",
+        message:"Welcome to News Project Backend!", 
+        uptime: `${hours}h ${minutes}m ${seconds}s`,
+        memoryUsage: {
+            rss: formatMB(memoryUsage.rss),
+            heapTotal: formatMB(memoryUsage.heapTotal),
+            heapUsed: formatMB(memoryUsage.heapUsed),
+            external: formatMB(memoryUsage.external),
+            arrayBuffers: formatMB(memoryUsage.arrayBuffers)
+        },
+        timestamp: new Date().toLocaleString()
+    });
+});
+
+
+app.use((req, res) => {
+    res.status(404).json({ message: 'Route not found' });
+}); 
+
 
 
 
