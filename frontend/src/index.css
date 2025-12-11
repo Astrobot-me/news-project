@@ -118,3 +118,23 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+/* Prose styles for article content */
+@layer base {
+  .prose h2 {
+    @apply text-2xl md:text-3xl font-bold mt-8 mb-4 text-foreground;
+  }
+
+  .prose p {
+    @apply text-foreground leading-relaxed mb-4;
+  }
+
+  .prose ul {
+    @apply list-disc list-inside space-y-2 mb-4 text-foreground;
+  }
+
+  .prose li {
+    @apply text-foreground;
+  }
+}
