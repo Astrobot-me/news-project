@@ -1,10 +1,20 @@
 import express, { type Request, type Response } from 'express';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import dotenv from "dotenv";
+import type { ErrorResponse } from '../utlils/schema.js';
 
-const GUARDIAN_API_KEY = process.env.GAURDIAN_API_KEY;
+
+
+dotenv.config({ 
+    path: "./.env" 
+});
+
+
 const GUARDIAN_BASE_URL = 'https://content.guardianapis.com';
+const GUARDIAN_API_KEY = process.env.GAURDIAN_API_KEY as string;
 
 export const getTopHeadlines = async (req: Request, res: Response) => {
+    
     try {
         const response = await axios.get(`${GUARDIAN_BASE_URL}/search`, {
             params: {
@@ -14,11 +24,17 @@ export const getTopHeadlines = async (req: Request, res: Response) => {
                 'page-size': 10,
             },
         });
-        res.json(response.data.response.results);
+        res.status(200).json(response.data.response.results);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch top headlines' });
+        
+        const err = error as AxiosError<ErrorResponse>; 
+        res.status(500).json({ 
+            error: 'Failed to fetch top headlines' ,
+            message: err?.response?.data?.message, 
+        });
     }
-};
+}; 
+
 
 export const getArticlesByQuery = async (req: Request, res: Response) => {
     const { q } = req.query;
@@ -36,7 +52,12 @@ export const getArticlesByQuery = async (req: Request, res: Response) => {
         });
         res.json(response.data.response.results);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch articles by query' });
+
+        const err = error as AxiosError<ErrorResponse>; 
+        res.status(500).json({ 
+            error: 'Failed to fetch articles by query' ,
+            message : err?.response?.data?.message
+        });
     }
 };
 
@@ -54,7 +75,12 @@ export const getArticleById = async (req: Request, res: Response) => {
         });
         res.json(response.data.response.content);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch article by ID' });
+
+        const err = error as AxiosError<ErrorResponse>; 
+        res.status(500).json({ 
+            error: 'Failed to fetch article by ID' , 
+            message : err?.response?.data?.message, 
+        });
     }
 };
 

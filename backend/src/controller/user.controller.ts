@@ -2,6 +2,11 @@ import asyncHandler from "express-async-handler";
 import { User } from "../model/user.model.js";
 import { generateJwt } from "../utlils/utils.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken"
+import type { JwtPayload } from "../utlils/schema.js";
+
+
+
 
 // To validate the sign In Request
 export const authenticateUser = asyncHandler(async (req, res) => {
@@ -10,7 +15,7 @@ export const authenticateUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
         res.status(401).json({
-        message: "Invalid credentials",
+        error: "Invalid credentials",
         });
         return;
     }
@@ -18,7 +23,7 @@ export const authenticateUser = asyncHandler(async (req, res) => {
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
         res.status(401).json({
-        message: "Invalid credentials",
+        error: "Invalid credentials",
         });
         return;
     }
@@ -27,7 +32,7 @@ export const authenticateUser = asyncHandler(async (req, res) => {
     res.status(200).json({
         message: "User is Successfully Logged In",
         email: user.email,
-        id: user._id,
+        userId: user._id,
         userToken: token,
     });
     return;
@@ -35,30 +40,52 @@ export const authenticateUser = asyncHandler(async (req, res) => {
 
 
 // To get User Details from Database 
-export const getUserDetails = asyncHandler( async (req, res ) => { 
+export const getUserDetails = asyncHandler(async (req, res) => {
+    const token = req.query.userToken;
 
-    const userId = req.query.userId as string;
-
-    if (!userId) {
-        res.status(400).json({ 
-            message: "User ID is required in query parameters" 
+    if (typeof token !== "string" || !token) {
+        res.status(400).json({
+            message: "User token is required in query parameters"
         });
         return;
     }
 
-    const user = await User.findById(userId); 
+    let decoded: JwtPayload;
+    const secretKey =  process.env.JWT_SECRET as string; 
+    // console.log(secretKey)  
+
+    try {
+        decoded = jwt.verify(
+            token,
+            secretKey
+        ) as JwtPayload;
+
+        // console.log("decoded", decoded)
+
+        if (!decoded.userId) {
+            throw new Error("Invalid token payload");
+        }
+    } catch (err) {
+        res.status(401).json({
+            error: "Invalid or expired token. Please login again."
+        });
+        return;
+    }
+
+    // Fetch user
+    const user = await User.findById(decoded.userId).select("-password");
+
     if (!user) {
-        res.status(404).json({ 
-            message: "User not found" 
+        res.status(404).json({
+            error: "User not found"
         });
         return;
     }
 
     res.status(200).json(user);
-    return; 
 
-} )
-
+    return;
+});
 
 // To register user in Database  
 export const registerUser = asyncHandler(async (req, res) => {
@@ -66,7 +93,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
     if (!email || !password || !Array.isArray(interest_tags)) {
         res.status(400).json({ 
-            message: "Email, password, and interest_tags are required" 
+            error: "Email, password, and interest_tags are required" 
         });
         return;
     }
@@ -74,7 +101,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
         res.status(409).json({ 
-            message: "Email already exists" 
+            error: "Email already exists" 
         });
         return;
     }
@@ -96,7 +123,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     res.status(201).json({
         message: "User is Successfully Registered",
         email: newUser.email,
-        id: newUser._id,
+        userId: newUser._id,
         userToken: token,
     });
 

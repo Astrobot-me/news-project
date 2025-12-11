@@ -1,29 +1,47 @@
-// import jwt from 'jsonwebtoken';
-// import asyncHandler from 'express-async-handler';
-// import { User } from '../src/model/user.model.js';
+import jwt from "jsonwebtoken";
+import asyncHandler from "express-async-handler";
+import { User } from "../model/user.model.js";
+import type { JwtPayload } from "../utlils/schema.js";
+import type { Request } from "express";
 
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: any;
+  }
+}
 
-// const protect = asyncHandler(async (req, res, next) => {
-//   let token;
+// Authorization header i.e. Bearer Token
 
-//   token = req.cookies.jwt;
+const protect = asyncHandler(async (req, res, next) => {
 
-//   if (token) {
-//     try {
-//       const decoded = jwt.verify(token, process.env.JWT_SECRET as unknown as string);
+    let token;
 
-//       req.user = await User.findById(decoded.userId).select('-password');
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer ")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
 
-//       next();
-//     } catch (error) {
-//       console.error(error);
-//       res.status(401);
-//       throw new Error('Token Failed, not authorized');
-//     }
-//   } else {
-//     res.status(401);
-//     throw new Error('No token found, not authorized');
-//   }
-// });
+    if (token) {
+      try {
+        const decoded = jwt.verify(
+          token,
+          process.env.JWT_SECRET as unknown as string
+        ) as JwtPayload;
 
-// export { protect };
+        req.user = await User.findById(decoded.userId).select("-password");
+
+        next();
+      } catch (error) {
+        console.error(error);
+        res.status(401);
+        throw new Error("Token Failed, not authorized");
+      }
+    } else {
+      res.status(401);
+      throw new Error("No token found, not authorized");
+    }
+});
+
+export { protect };
