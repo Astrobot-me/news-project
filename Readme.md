@@ -6,6 +6,11 @@ This repository contains both the **backend (Node.js + TypeScript)** and the **f
 
 ---
 
+
+# Credentials 
+- email : `test@adya.ai`
+- password : `12345`
+
 # Table of Contents
 
 1. Backend

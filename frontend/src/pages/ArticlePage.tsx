@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react"
 import { Link, useParams } from "react-router"
-import axios from "axios"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, User, Calendar, Clock, Share2 } from "lucide-react"
+import { ArrowLeft, User, Calendar, Clock, Share2, Save, CheckCheck } from "lucide-react"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import { BASE_URL } from "@/constant"
+import modifiedAxios from "@/lib/axiosConfig"
 
 
 export default function ArticlePage() : React.ReactNode {
@@ -22,7 +22,7 @@ export default function ArticlePage() : React.ReactNode {
       setError(null)
       try {
         // call backend: GET /api/articles/id/<actual_id>
-        const resp = await axios.get(`${BASE_URL}/api/articles/content`, {
+        const resp = await modifiedAxios.get(`${BASE_URL}/api/articles/content`, {
           params: { id }
         })
 
@@ -162,6 +162,31 @@ export default function ArticlePage() : React.ReactNode {
           </div>
         </div>
 
+          {/* Share Section */}
+        <div className="border-t border-border pt-8 mb-10">
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground">Share this article:</span>
+            <Button variant="outline" size="sm" className="gap-2 bg-transparent" asChild>
+              <a href={article.webUrl || "#"} target="_blank" rel="noopener noreferrer">
+                <Share2 className="w-4 h-4" />
+                Share
+              </a>
+            </Button>
+            <Button variant="outline" size="sm" className="gap-2 bg-transparent" asChild>
+              <a href={article.webUrl || "#"} target="_blank" rel="noopener noreferrer">
+                <Save className="w-4 h-4" />
+                Save this Article
+              </a>
+            </Button>
+            <Button variant="outline" size="sm" className="gap-2 bg-transparent" asChild>
+              <a href={article.webUrl || "#"} target="_blank" rel="noopener noreferrer">
+                <CheckCheck className="w-4 h-4" />
+                Mark as Read
+              </a>
+            </Button>
+          </div>
+        </div>
+
         {/* Article Content */}
         <div className="prose prose-sm md:prose-base max-w-none mb-12">
           {contentText
@@ -199,18 +224,7 @@ export default function ArticlePage() : React.ReactNode {
             })}
         </div>
 
-        {/* Share Section */}
-        <div className="border-t border-border pt-8">
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">Share this article:</span>
-            <Button variant="outline" size="sm" className="gap-2 bg-transparent" asChild>
-              <a href={article.webUrl || "#"} target="_blank" rel="noopener noreferrer">
-                <Share2 className="w-4 h-4" />
-                Share
-              </a>
-            </Button>
-          </div>
-        </div>
+      
       </article>
 
       <Footer />

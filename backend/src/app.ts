@@ -21,8 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"))
 
 app.use("/api/auth", AuthRouter)
-app.use("/api/articles", ArticleRouter)
-app.use("/api/user", UserRouter)
+app.use("/api/articles",protect, ArticleRouter)
+app.use("/api/user",protect , UserRouter)
 
 
 app.get("/", (req, res) => {

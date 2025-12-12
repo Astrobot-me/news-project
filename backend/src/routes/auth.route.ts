@@ -13,7 +13,7 @@ router.post("/login", authenticateUser);
 router.post("/register", registerUser); 
 
 //Todo: protect this route
-router.get("/getuser",protect, getUserDetails)
+router.get("/getuser", getUserDetails)
 
 
 

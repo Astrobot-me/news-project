@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react"
 import { Link } from "react-router"
-import axios from "axios"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import { Search } from "lucide-react"
 import { BASE_URL } from "@/constant"
+import modifiedAxios from "@/lib/axiosConfig"
 
 interface Article {
   id: string;
@@ -61,7 +61,7 @@ export default function HomePage() {
       setLoading(true)
       setError(null)
       try {
-        const resp = await axios.get(`${BASE_URL}/api/articles/top-headlines`)
+        const resp = await modifiedAxios.get(`${BASE_URL}/api/articles/top-headlines`)
 
         console.log("Res", resp)
         // Expect backend to return an array in resp.data. Adjust as necessary.
