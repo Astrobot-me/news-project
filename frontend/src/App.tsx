@@ -71,7 +71,7 @@ function App(): React.ReactNode {
         <Toaster />
         {/* Optional: show a simple full-screen loader while loading */}
         {loading ? (
-          <div className="w-full h-screen items-center justify-center bg-gray-200">
+          <div className="w-full h-screen flex items-center justify-center bg-gray-200">
             <LoaderPinwheel className="w-10 h-10 animate-spin" />
           </div>
         ) : (
