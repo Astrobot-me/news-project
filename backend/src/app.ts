@@ -12,7 +12,7 @@ const app = express()
 
 
 app.use(cors({ 
-    origin: ["http://localhost:5173", "https://news-project-one-steel.vercel.app/"]
+    origin: ["http://localhost:5173", "https://news-project-one-steel.vercel.app"]
 }))
 
 app.use(express.json()); 
