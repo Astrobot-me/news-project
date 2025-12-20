@@ -5,7 +5,8 @@ export interface UserType extends Document {
     password: string;
     interest_tags: string[];
     saved_articles : SavedArticleType[]; 
-    read_articles : ReadArticleType[] 
+    read_articles : ReadArticleType[] , 
+    refreshToken: string; 
 }
 
 
@@ -64,7 +65,8 @@ const UserSchema = new Schema<UserType>({
     }, 
 
     saved_articles : [SavedArticleSchema] , 
-    read_articles : [ReadArticleSchema]
+    read_articles : [ReadArticleSchema] , 
+    refreshToken : String
 }, 
 {
     timestamps:true

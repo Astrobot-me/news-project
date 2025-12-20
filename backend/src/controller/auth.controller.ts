@@ -4,6 +4,7 @@ import { generateJwt } from "../utlils/utils.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
 import type { JwtPayload } from "../utlils/schema.js";
+import { ACCESS_EXPIRATION, REF_EXPIRATION } from "../utlils/constant.js";
 
 
 
@@ -28,7 +29,20 @@ export const authenticateUser = asyncHandler(async (req, res) => {
         return;
     }
 
-    const token = generateJwt(user._id.toString());
+    const token = generateJwt(user._id.toString(),"access" ,  REF_EXPIRATION);
+    const refreshToken = generateJwt(user._id.toString(),"ref" ,ACCESS_EXPIRATION);
+
+    res.cookie( 
+        "refreshToken" , 
+        refreshToken, { 
+            httpOnly:true , 
+            secure: true, 
+            sameSite : "strict", 
+            path:"/refresh" , 
+            maxAge: 60*60*60*24*7 // 7 days 
+        }
+    )
+
     res.status(200).json({
         message: "User is Successfully Logged In",
         email: user.email,
@@ -36,6 +50,60 @@ export const authenticateUser = asyncHandler(async (req, res) => {
         userToken: token,
     });
     return;
+});
+
+// To register user in Database  
+export const registerUser = asyncHandler(async (req, res) => {
+    const { email, password, interest_tags } = req.body;
+
+    if (!email || !password || !Array.isArray(interest_tags)) {
+        res.status(400).json({ 
+            error: "Email, password, and interest_tags are required" 
+        });
+        return;
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+        res.status(409).json({ 
+            error: "Email already exists" 
+        });
+        return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({
+        email,
+        password: hashedPassword,
+        interest_tags,
+        saved_articles: [],
+        read_articles: []
+    });
+
+    await newUser.save();
+
+    const token = generateJwt(newUser._id.toString(),"access" ,  REF_EXPIRATION);
+    const refreshToken = generateJwt(newUser._id.toString(),"ref" ,ACCESS_EXPIRATION);
+
+    res.cookie("refreshToken", 
+        refreshToken, { 
+            httpOnly:true , 
+            secure: true, 
+            sameSite : "strict", 
+            path:"/refresh" , 
+            maxAge: 60*60*60*24*7 // 7 days 
+        }
+    )
+
+    res.status(201).json({
+        message: "User is Successfully Registered",
+        email: newUser.email,
+        userId: newUser._id,
+        userToken: token,
+    });
+
+    return; 
 });
 
 
@@ -87,47 +155,50 @@ export const getUserDetails = asyncHandler(async (req, res) => {
     return;
 });
 
-// To register user in Database  
-export const registerUser = asyncHandler(async (req, res) => {
-    const { email, password, interest_tags } = req.body;
 
-    if (!email || !password || !Array.isArray(interest_tags)) {
-        res.status(400).json({ 
-            error: "Email, password, and interest_tags are required" 
-        });
-        return;
+// Refresh Token Controller
+export const refreshTokenController = asyncHandler( 
+
+    // check - get - verify - reissue 
+    async (req,res) => { 
+
+        if(!req.cookies.refreshToken) { 
+            res.status(401); 
+            return;  
+        }
+
+        const refreshToken = req.cookies.refreshToken; 
+
+        const query =  User.findOne ({ 
+            refreshToken 
+        }) 
+
+        query.select({ refreshToken })
+
+        const foundUser = await query.exec(); 
+
+        if(!foundUser) { 
+            res.status(403); 
+            return; 
+        }
+
+        const isLegit = jwt.verify(
+            foundUser?.refreshToken,
+            process.env.REFRESH_SECRET as string 
+        ) as { userId : string}
+
+        if (!isLegit || foundUser._id.toString() != isLegit.userId) { 
+            res.status(403)
+            return;
+        }
+
+        const accessToken = generateJwt(foundUser._id.toString(), "access", ACCESS_EXPIRATION)
+
+        res.status(201).json({ 
+            userToken: accessToken
+        })
+        return; 
+
     }
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-        res.status(409).json({ 
-            error: "Email already exists" 
-        });
-        return;
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = new User({
-        email,
-        password: hashedPassword,
-        interest_tags,
-        saved_articles: [],
-        read_articles: []
-    });
-
-    await newUser.save();
-
-    const token = generateJwt(newUser._id.toString());
-
-    res.status(201).json({
-        message: "User is Successfully Registered",
-        email: newUser.email,
-        userId: newUser._id,
-        userToken: token,
-    });
-
-    return; 
-});
-
+)
 
