@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from 'express';
 import { 
     authenticateUser ,
     getUserDetails, 
+    refreshTokenController, 
     registerUser,
 } from '../controller/auth.controller.js';
 import { protect } from '../middleware/authMiddleware.js';
@@ -13,8 +14,9 @@ router.post("/login", authenticateUser);
 router.post("/register", registerUser); 
 
 //Todo: protect this route
-router.get("/getuser", getUserDetails)
+// router.get("/getuser", getUserDetails)
 
+router.get("/refresh", refreshTokenController)
 
 
 

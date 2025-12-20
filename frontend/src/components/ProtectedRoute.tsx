@@ -1,32 +1,36 @@
-import React, { useEffect, useState } from "react";
-import {useNavigate} from "react-router";
-import {useSelector} from "react-redux";
-import {  LoaderPinwheel } from "lucide-react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
+import Loading from "./Loading";
+import type { RootState } from "../store";
 
-export default function AuthChecker({children, authentication}){
+export default function AuthChecker({ children, authentication }) {
 
-    //  @ts-expect-error
-    const authStatus = useSelector((state)=> state.auth?.status as boolean)//false
-    const [loader,setLoader] = useState(true)
 
-    const navigate =  useNavigate();
+    const authStatus = useSelector((state: RootState) => state.auth?.status)
 
-    useEffect(()=>{
-        // console.log("Auth Stutus: ",authStatus);
-        
-        if (authentication && authStatus !== authentication) {
-            navigate("/auth/sign-in")
-        } else if(!authentication && authStatus !== authentication){
-            navigate("/")
+    const navigate = useNavigate();
+
+    useEffect(() => {
+
+        if (authStatus == null) return;
+
+        if (authentication && authStatus !== true) {
+            navigate("/auth/sign-in", { replace: true }) 
+            return;  
+        } else if (!authentication && authStatus !== true) {
+            navigate("/", { replace: true })
+            return; 
         }
-        setLoader(false)
 
-    },[authStatus,navigate,authentication])
+    }, [authStatus, navigate, authentication])
 
-    return(
-        loader? <div className="w-full h-screen flex items-center justify-center bg-gray-200"> 
-            <LoaderPinwheel className="w-10 h-10 animate-spin"/>
-        </div> : <> {children} </> 
+    if (authStatus == null) {
+        return <Loading />;
+    }
+
+    return (
+        <> {children} </>
     )
-} 
+}
 

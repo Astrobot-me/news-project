@@ -32,6 +32,12 @@ export const authenticateUser = asyncHandler(async (req, res) => {
     const token = generateJwt(user._id.toString(),"access" ,  REF_EXPIRATION);
     const refreshToken = generateJwt(user._id.toString(),"ref" ,ACCESS_EXPIRATION);
 
+    
+    // saving to DB 
+    user.refreshToken = refreshToken; 
+    await user.save(); 
+    
+
     res.cookie( 
         "refreshToken" , 
         refreshToken, { 
@@ -78,23 +84,13 @@ export const registerUser = asyncHandler(async (req, res) => {
         password: hashedPassword,
         interest_tags,
         saved_articles: [],
-        read_articles: []
+        read_articles: [], 
+        
     });
 
     await newUser.save();
 
-    const token = generateJwt(newUser._id.toString(),"access" ,  REF_EXPIRATION);
-    const refreshToken = generateJwt(newUser._id.toString(),"ref" ,ACCESS_EXPIRATION);
-
-    res.cookie("refreshToken", 
-        refreshToken, { 
-            httpOnly:true , 
-            secure: true, 
-            sameSite : "strict", 
-            path:"/refresh" , 
-            maxAge: 60*60*60*24*7 // 7 days 
-        }
-    )
+    const token = generateJwt(newUser._id.toString(),"access" ,  ACCESS_EXPIRATION);
 
     res.status(201).json({
         message: "User is Successfully Registered",
@@ -173,7 +169,7 @@ export const refreshTokenController = asyncHandler(
             refreshToken 
         }) 
 
-        query.select({ refreshToken })
+        query.select("refreshToken email");
 
         const foundUser = await query.exec(); 
 
@@ -195,6 +191,8 @@ export const refreshTokenController = asyncHandler(
         const accessToken = generateJwt(foundUser._id.toString(), "access", ACCESS_EXPIRATION)
 
         res.status(201).json({ 
+            userId: foundUser._id, 
+            email : foundUser.email, 
             userToken: accessToken
         })
         return; 

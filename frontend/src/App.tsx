@@ -1,48 +1,37 @@
-// App.tsx
 import React, { useEffect, useState } from "react";
 import HomePage from "./pages/HomePage";
 import { Toaster } from "react-hot-toast";
-import axios from "axios";
-import { useDispatch,  } from "react-redux";
+import { useDispatch, } from "react-redux";
 import { login, logout } from "@/store/authSlice";
 import toast from "react-hot-toast";
-import { BASE_URL } from "@/constant";
 import { LoaderPinwheel } from "lucide-react";
+import { simpleAxios } from "./lib/axiosConfig";
 
 function App(): React.ReactNode {
   const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useDispatch();
 
-  const userToken = localStorage.getItem("userToken");
 
   useEffect(() => {
     let cancelled = false;
 
-    const fetchCurrentUser = async (token?: string | null) => {
+    const fetchCurrentUser = async () => {
       setLoading(true);
-
-      if (!token) {
-        dispatch(logout());
-        setLoading(false);
-        return;
-      }
 
       try {
 
-        const url = `${BASE_URL}/api/auth/getuser?userToken=${encodeURIComponent(token)}`;
-
-        const res = await axios.get(url);
+        const res = await simpleAxios.get("/auth/refresh");
         const data = res.data;
 
         if (!cancelled) {
           dispatch(
             login({
-              userData: {
-                email: data.email,
-                userId: data.userId,
-                userToken: token,
 
-              },
+              email: data.email,
+              userId: data.userId,
+              userToken: data.userToken,
+
+
             })
           );
         }
@@ -57,19 +46,18 @@ function App(): React.ReactNode {
       }
     };
 
-    fetchCurrentUser(userToken);
+    fetchCurrentUser();
 
     return () => {
       cancelled = true;
     };
-  }, [userToken, dispatch]);
+  }, [dispatch]);
 
 
   return (
     <>
       <div>
         <Toaster />
-        {/* Optional: show a simple full-screen loader while loading */}
         {loading ? (
           <div className="w-full h-screen flex items-center justify-center bg-gray-200">
             <LoaderPinwheel className="w-10 h-10 animate-spin" />
