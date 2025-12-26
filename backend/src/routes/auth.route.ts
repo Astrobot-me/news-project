@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from 'express';
 import { 
     authenticateUser ,
     getUserDetails, 
+    handleLogoutController, 
     refreshTokenController, 
     registerUser,
 } from '../controller/auth.controller.js';
@@ -17,6 +18,7 @@ router.post("/register", registerUser);
 // router.get("/getuser", getUserDetails)
 
 router.get("/refresh", refreshTokenController)
+router.post("/logout", handleLogoutController)
 
 
 

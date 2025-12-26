@@ -8,27 +8,34 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build" :"npm install typescript && npx tsc --build", 
-    "dev": "npx tsc --build && node dist/index "
+    "build": "npm install typescript && npx tsc --build",
+    "devbuild": "npx tsc --build",
+    "dev": "npx tsc --build && nodemon dist/index ",
+    "start": "nodemon"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/morgan": "^1.9.10",
     "@types/node": "^24.10.2",
+    "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
   "dependencies": {
     "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
     "@types/jsonwebtoken": "^9.0.10",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "express-async-handler": "^1.2.0",
+    "express-rate-limit": "^8.2.1",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.0.1",
-    "morgan": "^1.10.1"
+    "morgan": "^1.10.1",
+    "nodemon": "^3.1.11"
   }
 }

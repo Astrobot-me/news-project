@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import HomePage from "./pages/HomePage";
 import { Toaster } from "react-hot-toast";
-import { useDispatch, } from "react-redux";
 import { login, logout } from "@/store/authSlice";
 import toast from "react-hot-toast";
 import { LoaderPinwheel } from "lucide-react";
 import { simpleAxios } from "./lib/axiosConfig";
+import { useAppDispatch } from "./store/hooks";
 
 function App(): React.ReactNode {
   const [loading, setLoading] = useState<boolean>(true);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-
+  // Persistence LOgic 
   useEffect(() => {
     let cancelled = false;
 
@@ -20,7 +20,7 @@ function App(): React.ReactNode {
 
       try {
 
-        const res = await simpleAxios.get("/auth/refresh");
+        const res = await simpleAxios.get("/api/auth/refresh");
         const data = res.data;
 
         if (!cancelled) {
@@ -38,7 +38,7 @@ function App(): React.ReactNode {
       } catch (err) {
 
         dispatch(logout());
-        const message = err?.response?.data?.message ?? err?.message ?? "Failed to fetch current user";
+        const message = (err?.response?.data?.message) ?? err?.message ?? "Failed to fetch current user";
         toast.error(message);
 
       } finally {
@@ -51,6 +51,7 @@ function App(): React.ReactNode {
     return () => {
       cancelled = true;
     };
+    
   }, [dispatch]);
 
 

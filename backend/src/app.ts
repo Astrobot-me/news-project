@@ -5,17 +5,29 @@ import { router as UserRouter } from './routes/user.route.js';
 import morgan from 'morgan'
 import { protect } from './middleware/authMiddleware.js';
 import cors from 'cors'
+import cookieParser from 'cookie-parser';
 
 const app = express() 
 
 
 
+app.use((req, _res, next) => {
+  console.log("🔥 HIT:", req.method, req.originalUrl);
+  next();
+});
 
-app.use(cors({ 
-    origin: ["http://localhost:5173", "https://news-project-one-steel.vercel.app"]
-}))
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+  })
+);
+
 
 app.use(express.json()); 
+app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }));
 
 app.use(morgan("dev"))

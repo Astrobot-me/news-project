@@ -8,7 +8,7 @@ interface StateDataType {
 
 interface AuthStateType { 
     status : boolean | null , 
-    userData : StateDataType
+    userData : StateDataType | null
 }
 
 

@@ -12,9 +12,7 @@ import AuthChecker from './components/ProtectedRoute.tsx'
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <AuthChecker authentication={true}>
-      <App/>
-    </AuthChecker>,
+    element: <App/>,
     children: [
 
     ]

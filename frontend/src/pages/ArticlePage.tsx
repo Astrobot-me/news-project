@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, User, Calendar, Clock, Share2, Save, CheckCheck } from "lucide-react"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
-import { BASE_URL } from "@/constant"
-import modifiedAxios from "@/lib/axiosConfig"
+import useAxiosMod from "@/hooks/useAxiosMod"
 
 
 export default function ArticlePage() : React.ReactNode {
@@ -15,6 +14,9 @@ export default function ArticlePage() : React.ReactNode {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+
+  const axiosAuth = useAxiosMod();
+
   useEffect(() => {
     let cancelled = false
     async function fetchArticle() { 
@@ -22,7 +24,7 @@ export default function ArticlePage() : React.ReactNode {
       setError(null)
       try {
         // call backend: GET /api/articles/id/<actual_id>
-        const resp = await modifiedAxios.get(`${BASE_URL}/api/articles/content`, {
+        const resp = await axiosAuth.get(`/api/articles/content`, {
           params: { id }
         })
 
