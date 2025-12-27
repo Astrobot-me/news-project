@@ -5,6 +5,9 @@ import Loading from "@/components/Loading"
 import useAxiosMod from "@/hooks/useAxiosMod"
 import ArticleContent from "@/components/ArticleContent"
 import type { ArticleContentProps } from "@/types"
+import { Badge } from "@/components/ui/badge"
+import { Sparkle, Star } from "lucide-react"
+import AISummary from "@/components/AISummary"
 
 
 export default function ArticlePage(): React.ReactNode {
@@ -80,16 +83,14 @@ export default function ArticlePage(): React.ReactNode {
   }
 
   return (
-    <div className="flex px-10 gap-5">
-      
+    <div className="flex sm:flex-row px-10 max-w-7xl mx-auto gap-5">
+
       {/* Article Section  */}
-      <ArticleContent article={article}/>
+      <ArticleContent article={article} />
 
       {/* Utility Section */}
 
-      <div className="px-10 py-5">
-        <h1></h1>
-      </div>
+      <AISummary/>
 
     </div>
   )
