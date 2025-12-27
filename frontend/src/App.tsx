@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import HomePage from "./pages/HomePage";
 import { Toaster } from "react-hot-toast";
 import { login, logout } from "@/store/authSlice";
 import toast from "react-hot-toast";
 import { LoaderPinwheel } from "lucide-react";
 import { simpleAxios } from "./lib/axiosConfig";
 import { useAppDispatch } from "./store/hooks";
+import Layout from "./Layout";
+
 
 function App(): React.ReactNode {
   const [loading, setLoading] = useState<boolean>(true);
@@ -64,7 +65,7 @@ function App(): React.ReactNode {
             <LoaderPinwheel className="w-10 h-10 animate-spin" />
           </div>
         ) : (
-          <HomePage />
+          <Layout/>
         )}
       </div>
     </>

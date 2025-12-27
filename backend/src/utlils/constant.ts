@@ -1,2 +1,2 @@
-export const REF_EXPIRATION = "10m"
-export const ACCESS_EXPIRATION = "3m"
+export const REF_EXPIRATION = "1d"
+export const ACCESS_EXPIRATION = "1hr"

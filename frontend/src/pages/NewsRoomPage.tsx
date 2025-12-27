@@ -4,8 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
-import { Search } from "lucide-react"
 import useAxiosMod from "@/hooks/useAxiosMod"
+import { SearchBar } from "@/components/SearchBar"
 
 interface Article {
   id: string;
@@ -44,7 +44,7 @@ function normalizeItem(item: any) {
   }
 }
 
-export default function HomePage() {
+export default function NewsRoomPage() {
     const [selectedFilter, setSelectedFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState("")
     const [articles, setArticles] = useState<Article[]>([])
@@ -101,8 +101,7 @@ export default function HomePage() {
 
     return (
       <div className="min-h-screen bg-background">
-        <Header />
-
+  
         {/* Hero Section */}
         <section className="bg-linear-to-b from-primary/10 to-background py-12 md:py-16">
           <div className="max-w-6xl mx-auto px-4 text-center">
@@ -115,18 +114,8 @@ export default function HomePage() {
 
         {/* Main Content */}
         <main className="max-w-6xl mx-auto px-4 py-12">
-          <div className="mb-8">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
-              <input
-                type="text"
-                placeholder="Search with AI: 'How to center a div'..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-secondary border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
-              />
-            </div>
-          </div>
+         
+          <SearchBar/>
 
           <div className="mb-8 bg-secondary rounded-lg p-4 flex flex-wrap gap-3">
             {filters.map((filter) => (
@@ -151,7 +140,7 @@ export default function HomePage() {
             ) : filteredArticles.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredArticles.map((article) => (
-                  <Link key={article.id} to={`/article/id/${encodeURIComponent(article.id)}`}>
+                  <Link key={article.id} to={`/app/article/id/${encodeURIComponent(article.id)}`}>
                     <Card className="h-full hover:shadow-lg transition-all duration-300 hover:border-primary/50 cursor-pointer group">
                       <div className="relative overflow-hidden bg-muted h-48">
                         <img
@@ -194,7 +183,7 @@ export default function HomePage() {
           </div>
         </main>
 
-        <Footer />
+
       </div>
     )
 }
