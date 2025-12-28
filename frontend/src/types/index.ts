@@ -19,6 +19,7 @@ interface ArticleFields {
 }
 
 interface Article {
+    id?: string; 
     type?: string;
     sectionId?: string;
     sectionName?: string;
@@ -34,8 +35,12 @@ interface Article {
     productionOffice?: string;
     fields?: ArticleFields;
     [key: string]: any;
+    isSaved?: boolean; 
 }
 
 export type ArticleContentProps = {
-    article: Article;
-};
+    article: Article; 
+    handleSave : (articleId : string ) => void ; 
+    handleShare : (webUrl: string) => void ; 
+    handleMarkRead : (articleId : string ) => void ; 
+ };

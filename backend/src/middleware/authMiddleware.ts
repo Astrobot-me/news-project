@@ -30,7 +30,9 @@ const protect = asyncHandler(async (req, res, next) => {
           process.env.ACCESS_SECRET as unknown as string
         ) as JwtPayload;
 
-        req.user = await User.findById(decoded.userId).select("-password");
+        const user = await User.findById(decoded.userId).select("-password");
+        req.user = user; 
+        // console.log(user)
 
         next();
       } catch (error) {

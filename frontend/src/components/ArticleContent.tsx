@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  Share2,
   Save,
   CheckCheck,
   Clock,
@@ -13,25 +12,26 @@ import { Button } from './ui/button';
 import type { ArticleContentProps } from '@/types';
 
 
-
-function ArticleContent( { article } : ArticleContentProps ) {
+function ArticleContent( { article, handleMarkRead, handleSave, handleShare } : ArticleContentProps ) {
   
 
     const {
-        type,
-        sectionId,
+        id : articleId, 
+        // type,
+        // sectionId,
         sectionName,
-        pillarId,
+        // pillarId,
         pillarName,
         webTitle,
         webPublicationDate,
         webUrl,
-        apiUrl,
+        // apiUrl,
         isLive,
-        isHosted,
+        // isHosted,
         publication,
         productionOffice,
         fields = {},
+        isSaved,
     } = article
 
     const {
@@ -50,7 +50,7 @@ function ArticleContent( { article } : ArticleContentProps ) {
         newspaperEditionDate,
         shortUrl,
         lang,
-        legallySensitive,
+        // legallySensitive,
     } = fields
 
     const title = headline || webTitle
@@ -65,6 +65,10 @@ function ArticleContent( { article } : ArticleContentProps ) {
     const readTime = Math.ceil(
         Number(wordcount || bodyText?.split(" ").length || 0) / 200
     )
+
+
+
+   
     return (
         <div className="min-h-screen bg-background" lang={lang || "en"}>
 
@@ -147,19 +151,28 @@ function ArticleContent( { article } : ArticleContentProps ) {
                         Share this article:
                     </span>
 
-                    <Button variant="outline" size="sm" className="gap-2" asChild>
-                        <a href={webUrl} target="_blank" rel="noopener noreferrer">
-                            <Share2 className="w-4 h-4" />
+                    <Button variant="outline" size="sm" className="gap-2" 
+                    
+                    onClick={() => { handleShare(webUrl) }}
+                    >
+                       
                             Share
-                        </a>
+                    
                     </Button>
 
-                    <Button variant="outline" size="sm" className="gap-2">
+                    <Button variant="outline" size="sm" className="gap-2"
+                    
+                    onClick={() => { handleSave(articleId) }}
+                    disabled={isSaved}
+                    >
                         <Save className="w-4 h-4" />
-                        Save
+                         { isSaved? "Already Saved" : "Save"}
                     </Button>
 
-                    <Button variant="outline" size="sm" className="gap-2">
+                    <Button variant="outline" size="sm" className="gap-2"
+                    
+                    onClick={() => { handleMarkRead(articleId) }}
+                    >
                         <CheckCheck className="w-4 h-4" />
                         Mark as Read
                     </Button>

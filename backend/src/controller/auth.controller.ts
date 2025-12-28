@@ -26,11 +26,12 @@ export const authenticateUser = asyncHandler(async (req, res) => {
 		return;
 	}
 
-	const token = generateJwt(user._id.toString(), "access", REF_EXPIRATION);
+	const accessToken = generateJwt(user._id.toString(), "access", ACCESS_EXPIRATION);
 	const refreshToken = generateJwt(
 		user._id.toString(),
 		"ref",
-		ACCESS_EXPIRATION
+		REF_EXPIRATION
+
 	);
 
 	// saving to DB
@@ -49,7 +50,7 @@ export const authenticateUser = asyncHandler(async (req, res) => {
 		message: "User is Successfully Logged In",
 		email: user.email,
 		userId: user._id,
-		userToken: token,
+		userToken: accessToken,
 	});
 	return;
 });

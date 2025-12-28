@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { Link, useParams } from "react-router"
 import { Button } from "@/components/ui/button"
 import Loading from "@/components/Loading"
 import useAxiosMod from "@/hooks/useAxiosMod"
 import ArticleContent from "@/components/ArticleContent"
 import type { ArticleContentProps } from "@/types"
-import { Badge } from "@/components/ui/badge"
-import { Sparkle, Star } from "lucide-react"
 import AISummary from "@/components/AISummary"
+import toast from "react-hot-toast"
+import { useAppSelector } from "@/store/hooks"
 
 
 export default function ArticlePage(): React.ReactNode {
@@ -17,6 +17,8 @@ export default function ArticlePage(): React.ReactNode {
   const [article, setArticle] = useState<ArticleContentProps[]>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const { status, userData } = useAppSelector((state) => state.auth)
 
 
   useEffect(() => {
@@ -35,7 +37,8 @@ export default function ArticlePage(): React.ReactNode {
           return
         }
 
-        setArticle(resp.data)
+        setArticle({ ...resp.data?.content, isSaved:resp.data?.isSaved})
+
       } catch (err) {
         console.error(err)
         setError(
@@ -48,9 +51,37 @@ export default function ArticlePage(): React.ReactNode {
       }
     }
 
-    fetchArticle()
-  }, [id, axiosAuth])
+    if (status) fetchArticle();
 
+  }, [id, axiosAuth, status])
+
+  const handleShare = (webUrl: string) => {
+    navigator.clipboard.writeText(webUrl || window.location.href)
+    toast.success("Url is copied to clipboard")
+
+  }
+
+  const handleSave = useCallback(async (articleId: string) => {
+
+    if (!status) return;
+
+    try {
+      const res = await axiosAuth.post("/api/user/save-article", {
+        userId: userData.userId,
+        articleId
+      })
+
+      toast.success(res?.data?.message)
+
+    } catch (error :any) {
+      toast.error("Error saving the article")
+    }
+
+  }, [axiosAuth, userData, status])
+
+  const handleMarkRead = useCallback(async (articleId: string) => {
+      console.log(articleId)
+  }, [])
 
 
   if (loading) return <Loading />
@@ -86,11 +117,11 @@ export default function ArticlePage(): React.ReactNode {
     <div className="flex sm:flex-row px-10 max-w-7xl mx-auto gap-5">
 
       {/* Article Section  */}
-      <ArticleContent article={article} />
+      <ArticleContent article={article} handleMarkRead={handleMarkRead} handleSave={handleSave} handleShare={handleShare} />
 
       {/* Utility Section */}
 
-      <AISummary/>
+      <AISummary />
 
     </div>
   )

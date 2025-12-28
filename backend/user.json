@@ -1,0 +1,22 @@
+{
+    "_id": "694e2e678a9b63bc4977f98c",
+    "email": "test@rajaditya.me",
+    "interest_tags": [],
+    "saved_articles": [
+        {
+            "article_id": "world/live/2025/dec/28/ukraine-war-live-russia-zelenskyy-trump-meeting-florida-kyiv-latest-news-updates",
+            "timestamp": "2025-12-28T14:45:02.130Z",
+            "_id": "6951426ea63f0025c4a9a2a6"
+        },
+        {
+            "article_id": "world/live/2025/dec/28/ukraine-war-live-russia-zelenskyy-trump-meeting-florida-kyiv-latest-news-updates",
+            "timestamp": "2025-12-28T14:45:30.121Z",
+            "_id": "6951428aa63f0025c4a9a2ac"
+        }
+    ],
+    "read_articles": [],
+    "createdAt": "2025-12-26T06:42:47.892Z",
+    "updatedAt": "2025-12-28T14:45:30.122Z",
+    "__v": 2,
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTRlMmU2NzhhOWI2M2JjNDk3N2Y5OGMiLCJpYXQiOjE3NjY5MzI5NzksImV4cCI6MTc2NzAxOTM3OX0.MYWSAhQ8LpINRwX0E_JIDNn99wXIbeaPPc6fO18uN-Y"
+}
