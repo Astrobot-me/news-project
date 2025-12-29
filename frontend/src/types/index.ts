@@ -18,7 +18,7 @@ interface ArticleFields {
     [key: string]: any;
 }
 
-interface Article {
+export interface Article {
     id?: string; 
     type?: string;
     sectionId?: string;
@@ -40,7 +40,9 @@ interface Article {
 
 export type ArticleContentProps = {
     article: Article; 
-    handleSave : (articleId : string ) => void ; 
+    handleSave : (articleId : string, mode : "save" | "mark" ) => void ; 
     handleShare : (webUrl: string) => void ; 
     handleMarkRead : (articleId : string ) => void ; 
+    handleRemoveSaved : (articleId : string, mode : "save" | "mark" ) => void ; 
+    handleRemoveMarked : (articleId : string ) => void  ; 
  };

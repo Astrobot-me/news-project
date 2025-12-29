@@ -1,22 +1,24 @@
 import React from 'react'
 import {
-  Save,
-  CheckCheck,
-  Clock,
-  User,
-  Calendar,
-} from "lucide-react"; 
-import { Badge } from "@/components/ui/badge"; 
-import { parseHtml } from "@/parser/parseHtml"; 
+    Save,
+    CheckCheck,
+    Clock,
+    User,
+    Calendar,
+    Trash,
+    Cross,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { parseHtml } from "@/parser/parseHtml";
 import { Button } from './ui/button';
 import type { ArticleContentProps } from '@/types';
 
 
-function ArticleContent( { article, handleMarkRead, handleSave, handleShare } : ArticleContentProps ) {
-  
+function ArticleContent({ article, handleMarkRead, handleSave, handleShare, handleRemoveMarked, handleRemoveSaved }: ArticleContentProps) {
+
 
     const {
-        id : articleId, 
+        id: articleId,
         // type,
         // sectionId,
         sectionName,
@@ -68,7 +70,7 @@ function ArticleContent( { article, handleMarkRead, handleSave, handleShare } : 
 
 
 
-   
+
     return (
         <div className="min-h-screen bg-background" lang={lang || "en"}>
 
@@ -151,31 +153,59 @@ function ArticleContent( { article, handleMarkRead, handleSave, handleShare } : 
                         Share this article:
                     </span>
 
-                    <Button variant="outline" size="sm" className="gap-2" 
-                    
-                    onClick={() => { handleShare(webUrl) }}
-                    >
-                       
-                            Share
-                    
-                    </Button>
-
                     <Button variant="outline" size="sm" className="gap-2"
-                    
-                    onClick={() => { handleSave(articleId) }}
-                    disabled={isSaved}
+
+                        onClick={() => { handleShare(webUrl) }}
+                    >
+
+                        Share
+
+                    </Button>
+                    <Button variant="outline" size="sm" className="gap-2"
+
+                        onClick={() => { handleSave(articleId, "save") }}
+                        disabled={isSaved}
                     >
                         <Save className="w-4 h-4" />
-                         { isSaved? "Already Saved" : "Save"}
+                        {isSaved ? "Already Saved" : "Save"}
                     </Button>
 
+                    {
+
+
+                        isSaved && <Button variant="outline" size="sm" className="gap-2"
+
+                            onClick={() => { handleRemoveSaved(articleId, "save") }}
+                            disabled={!isSaved}
+                        >
+                            <Trash className="w-4 h-4" />
+                            Remove from Save
+                        </Button>
+
+                    }
+
                     <Button variant="outline" size="sm" className="gap-2"
-                    
-                    onClick={() => { handleMarkRead(articleId) }}
+
+                        onClick={() => { handleMarkRead(articleId) }}
                     >
                         <CheckCheck className="w-4 h-4" />
                         Mark as Read
                     </Button>
+
+
+                    {
+
+
+                        isSaved && <Button variant="outline" size="sm" className="gap-2"
+
+                            onClick={() => { handleRemoveMarked(articleId) }}
+                            disabled={!isSaved}
+                        >
+                            <Cross className="w-4 h-4" />
+                           Remove mark
+                        </Button>
+
+                    }
                 </div>
 
                 {/* Publication footer */}

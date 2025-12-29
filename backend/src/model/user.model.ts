@@ -21,20 +21,20 @@ export interface SavedArticleType extends Document {
 const SavedArticleSchema = new Schema<SavedArticleType>({
     article_id: {
         type: String,
-        required: true
+        // required: true
     },
     thumbnail_url : { 
         type:String, 
-        required: true, 
+        // required: true, 
 
     }, 
     title: { 
         type:String, 
-        required: true, 
+        // required: true, 
     }, 
     description : { 
         type: String, 
-        required : true,  
+        // required : true,  
     }
 }, 
 { 
@@ -53,20 +53,20 @@ export interface ReadArticleType extends Document {
 const ReadArticleSchema = new Schema<ReadArticleType>({
     article_id: {
         type: String,
-        required: true
+        // required: true
     },
     thumbnail_url : { 
         type:String, 
-        required: true, 
+        // required: true, 
 
     }, 
     title: { 
         type:String, 
-        required: true, 
+        // required: true, 
     }, 
     description : { 
         type: String, 
-        required : true,  
+        // required : true,  
     }
 }, 
  { 
