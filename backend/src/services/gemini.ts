@@ -1,12 +1,11 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
-import { StringOutputParser } from "@langchain/core/output_parsers";
 import { HumanMessage, SystemMessage } from "langchain";
 import * as z from "zod";
 
 const model = new ChatGoogleGenerativeAI({
-	model: "gemini-pro",
-	maxOutputTokens: 2048,
+	model: "gemini-2.5-flash",
+	maxOutputTokens: 8048,
 });
 
 const message = [
@@ -24,7 +23,8 @@ const outputSchema = z.object({
 			"Contain in depth content about the topic , yet crisp & not verbose"
 		),
 	suggested_topics: z
-		.string()
+		.array(z.string())
+		.min(3)
 		.describe("contains array of all relayted topics , min of 3 topics"),
 });
 
