@@ -10,6 +10,7 @@ import store from './store/store.ts'
 import AuthChecker from './components/ProtectedRoute.tsx'
 import NewsRoomPage from './pages/NewsRoomPage.tsx'
 import LandingPage from './pages/LandingPage.tsx'
+import SavedArticlePage from './pages/SavedArticlePage.tsx'
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,12 @@ const router = createBrowserRouter([
         path: "news",
         element: <AuthChecker authentication={true}>
           <NewsRoomPage />
+        </AuthChecker>
+      },
+      {
+        path: "saved",
+        element: <AuthChecker authentication={true}>
+          <SavedArticlePage  />
         </AuthChecker>
       },
       {

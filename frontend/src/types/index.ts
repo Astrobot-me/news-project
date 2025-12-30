@@ -36,6 +36,7 @@ export interface Article {
     fields?: ArticleFields;
     [key: string]: any;
     isSaved?: boolean; 
+    isRead?: boolean; 
 }
 
 export type ArticleContentProps = {
@@ -46,3 +47,13 @@ export type ArticleContentProps = {
     handleRemoveSaved : (articleId : string, mode : "save" | "mark" ) => void ; 
     handleRemoveMarked : (articleId : string ) => void  ; 
  };
+
+
+
+export type SavedArticle = { 
+        article_id: string
+        thumbnail_url?: string
+        title: string
+        description: string
+        createdAt: string
+}

@@ -61,13 +61,12 @@ export const getArticleById = async (req: Request, res: Response) => {
 	// Decode URI component and replace %2F with /
 	id = decodeURIComponent(id as string).replace(/%2F/g, "/");
 
-	console.log("Id", id);
+	// console.log("Id", id);
 	if (!id) {
 		return res.status(400).json({ error: "Article ID is required" });
 	}
 	try {
-
-        //Optimize : Sequential Requests -> Parallel Requests 
+		//Optimize : Sequential Requests -> Parallel Requests
 		const response = await axios.get(`${GUARDIAN_BASE_URL}/${id}`, {
 			params: {
 				"api-key": GUARDIAN_API_KEY,
@@ -75,22 +74,63 @@ export const getArticleById = async (req: Request, res: Response) => {
 			},
 		});
 
-		const user = await User.exists({
-			_id: req.user._id,
-			"saved_articles.article_id": String(id) ,
-		});
+		// const user = await User.exists({
+		// 	_id: req.user._id,
+		// 	"saved_articles.article_id": String(id) ,
+		// });
 
+		const result = await User.aggregate([
+			{ $match: { _id: req.user._id } },
+			{
+				$project: {
+					_id: 0,
+					isSaved: {
+						$gt: [
+							{
+								$size: {
+									$setIntersection: [
+										[id],
+										"$saved_articles.article_id",
+									],
+								},
+							},
+							0,
+						],
+					},
+					isRead: {
+						$gt: [
+							{
+								$size: {
+									$setIntersection: [
+										[id],
+										"$read_articles.article_id",
+									],
+								},
+							},
+							0,
+						],
+					},
+				},
+			},
+		]);
 
-		let isSaved = false;
-		if (user) {
-			isSaved = Boolean(user);
-		}
+		// let isSaved = false;
+		// if (user) {
+		// 	isSaved = Boolean(user);
+		// }
+
+		const { isSaved, isRead } = result[0] || {
+			isSaved: false,
+			isRead: false,
+		};
+
+		// console.log(result)
 
 		res.status(200).json({
 			isSaved,
+			isRead, 
 			content: response.data.response.content,
 		});
-
 	} catch (error) {
 		const err = error as AxiosError<ErrorResponse>;
 		res.status(500).json({

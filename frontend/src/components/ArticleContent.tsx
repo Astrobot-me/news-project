@@ -6,7 +6,7 @@ import {
     User,
     Calendar,
     Trash,
-    Cross,
+    X,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { parseHtml } from "@/parser/parseHtml";
@@ -34,6 +34,7 @@ function ArticleContent({ article, handleMarkRead, handleSave, handleShare, hand
         productionOffice,
         fields = {},
         isSaved,
+        isRead,
     } = article
 
     const {
@@ -161,51 +162,59 @@ function ArticleContent({ article, handleMarkRead, handleSave, handleShare, hand
                         Share
 
                     </Button>
-                    <Button variant="outline" size="sm" className="gap-2"
+                    <Button
+                        variant={isSaved ? "destructive" : "default"}
+                        size="sm"
+                        onClick={() => {
+                            if (!isSaved) {
+                                handleSave(articleId, 'save')
+                            } else {
+                                handleRemoveSaved(articleId, 'save')
+                            }
 
-                        onClick={() => { handleSave(articleId, "save") }}
-                        disabled={isSaved}
+                        }}
+                        className="gap-2"
                     >
-                        <Save className="w-4 h-4" />
-                        {isSaved ? "Already Saved" : "Save"}
+                        {isSaved ? (
+                            <>
+                                <Trash className="w-4 h-4" />
+                                Remove Save
+                            </>
+                        ) : (
+                            <>
+                                <Save className="w-4 h-4" />
+                                Save
+                            </>
+                        )}
                     </Button>
 
-                    {
+                    {/* Read Toggle */}
+                    <Button
+                        variant={isRead ? "destructive" : "outline"}
+                        size="sm"
+                        onClick={() => {
+                            if (isRead) {
 
-
-                        isSaved && <Button variant="outline" size="sm" className="gap-2"
-
-                            onClick={() => { handleRemoveSaved(articleId, "save") }}
-                            disabled={!isSaved}
-                        >
-                            <Trash className="w-4 h-4" />
-                            Remove from Save
-                        </Button>
-
-                    }
-
-                    <Button variant="outline" size="sm" className="gap-2"
-
-                        onClick={() => { handleMarkRead(articleId) }}
+                                handleRemoveMarked(articleId)
+                            } else {
+                                handleMarkRead(articleId)
+                            }
+                        }}
+                        className="gap-2"
                     >
-                        <CheckCheck className="w-4 h-4" />
-                        Mark as Read
+                        {isRead
+                            ? (
+                                <>
+                                    <X className="w-4 h-4" />
+                                    Remove from Read
+                                </>
+                            ) : (
+                                <>
+                                    <CheckCheck className="w-4 h-4" />
+                                    Mark as Read
+                                </>
+                            )}
                     </Button>
-
-
-                    {
-
-
-                        isSaved && <Button variant="outline" size="sm" className="gap-2"
-
-                            onClick={() => { handleRemoveMarked(articleId) }}
-                            disabled={!isSaved}
-                        >
-                            <Cross className="w-4 h-4" />
-                           Remove mark
-                        </Button>
-
-                    }
                 </div>
 
                 {/* Publication footer */}

@@ -66,10 +66,10 @@ export const getSavedArticles = asyncHandler(async (req, res) => {
 export const removeSavedArticle = asyncHandler(async (req, res) => {
 	try {
 		const userId = req.user._id;
-	
-		const articleId = decodeURIComponent(req.params.articleId as string)
 
-		console.log("Artilce ID: ", articleId, userId)
+		const articleId = decodeURIComponent(req.params.articleId as string);
+
+		console.log("Artilce ID: ", articleId, userId);
 
 		if (!userId || !articleId) {
 			res.status(400).json({
@@ -85,7 +85,6 @@ export const removeSavedArticle = asyncHandler(async (req, res) => {
 			});
 		}
 
-		
 		const result = await User.updateOne(
 			{
 				_id: userId,
@@ -93,26 +92,31 @@ export const removeSavedArticle = asyncHandler(async (req, res) => {
 			{
 				$pull: {
 					saved_articles: {
-						articleId
+						article_id: articleId,
 					},
 				},
 			}
 		);
 
-		res.status(200).json({
-			message: "Article removed Successfully",
-		});
-		return; 
+		if (result && result?.matchedCount > 0 && result?.modifiedCount > 0) {
+			res.status(200).json({
+				message: "Article removed successfully",
+			});
+			return;
+		}
 
+		res.status(203).json({
+			message: "Article already removed",
+		});
+		
+		return;
 	} catch (error) {
 		res.status(500).json({
 			message: "Some Internal Server Error Occured",
 		});
-		return; 
+		return;
 	}
-}
-)
-
+});
 
 // To save an Read Article or Mark as Read
 export const saveReadArticle = asyncHandler(async (req, res) => {
@@ -175,11 +179,11 @@ export const getReadArticles = asyncHandler(async (req, res) => {
 	});
 });
 
-export const removeReadArticle = asyncHandler( async (req, res) => {
+export const removeReadArticle = asyncHandler(async (req, res) => {
 	try {
 		const userId = req.user._id;
-	
-		const articleId = decodeURIComponent(req.query?.articleId as string).replace(/%2F/g, "/");
+
+		const articleId = decodeURIComponent(req.params.articleId as string);
 
 		if (!userId || !articleId) {
 			res.status(400).json({
@@ -195,7 +199,6 @@ export const removeReadArticle = asyncHandler( async (req, res) => {
 			});
 		}
 
-		
 		const result = await User.updateOne(
 			{
 				_id: userId,
@@ -203,13 +206,26 @@ export const removeReadArticle = asyncHandler( async (req, res) => {
 			{
 				$pull: {
 					read_articles: {
-						articleId
+						article_id: articleId,
 					},
 				},
 			}
 		);
 
+		console.log(result)
 
+		if (result && result?.matchedCount > 0 && result?.modifiedCount > 0) {
+			res.status(200).json({
+				message: "Article unmarked successfully",
+			});
+			return;
+		}
+
+		res.status(203).json({
+			message: "Article not present",
+		});
+
+		return;
 	} catch (error) {
 		res.status(500).json({
 			message: "Some Internal Server Error Occured",

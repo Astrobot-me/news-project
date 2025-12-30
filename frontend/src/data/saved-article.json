@@ -1,0 +1,121 @@
+[
+    {
+        "data": {
+            "saved_articles": [
+                {
+                    "article_id": "world/2025/dec/30/donald-trump-benjamin-netanyahu-white-house-conference-analysis",
+                    "thumbnail_url": "https://media.guim.co.uk/5b86babb5a68f66556cc58170b5da2fe3a657f73/530_0_5000_4000/500.jpg",
+                    "title": "Trump shows customary disdain for protocol as poker-faced Netanyahu watches on",
+                    "description": "Trump shows customary disdain for protocol as poker-faced Netanyahu watches on",
+                    "_id": "6953a440bd8efad0b0b24f21",
+                    "createdAt": "2025-12-30T10:06:56.048Z",
+                    "updatedAt": "2025-12-30T10:06:56.048Z"
+                },
+                {
+                    "article_id": "commentisfree/2025/dec/30/2025-celebrities",
+                    "thumbnail_url": "https://media.guim.co.uk/1a9a68820014ece677a40dc0d91550e80aedf467/1_0_4998_4000/500.jpg",
+                    "title": "2025 was the year we grew tired of celebrity for celebrity’s sake | Nadia Khomami",
+                    "description": "2025 was the year we grew tired of celebrity for celebrity’s sake",
+                    "_id": "6953a455bd8efad0b0b24f47",
+                    "createdAt": "2025-12-30T10:07:17.093Z",
+                    "updatedAt": "2025-12-30T10:07:17.093Z"
+                }
+            ]
+        },
+        "status": 200,
+        "statusText": "OK",
+        "headers": {
+            "content-length": "977",
+            "content-type": "application/json; charset=utf-8"
+        },
+        "config": {
+            "transitional": {
+                "silentJSONParsing": true,
+                "forcedJSONParsing": true,
+                "clarifyTimeoutError": false
+            },
+            "adapter": [
+                "xhr",
+                "http",
+                "fetch"
+            ],
+            "transformRequest": [
+                null
+            ],
+            "transformResponse": [
+                null
+            ],
+            "timeout": 0,
+            "xsrfCookieName": "XSRF-TOKEN",
+            "xsrfHeaderName": "X-XSRF-TOKEN",
+            "maxContentLength": -1,
+            "maxBodyLength": -1,
+            "env": {},
+            "headers": {
+                "Accept": "application/json, text/plain, */*",
+                "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTRlMmU2NzhhOWI2M2JjNDk3N2Y5OGMiLCJpYXQiOjE3NjcwOTI0MTAsImV4cCI6MTc2NzA5NjAxMH0.zfu-al_9BA9tHm6DjKEehP-10sARGfVM0rRaGcB542c"
+            },
+            "baseURL": "http://localhost:9000",
+            "withCredentials": true,
+            "method": "get",
+            "url": "/api/user/save-article",
+            "allowAbsoluteUrls": true
+        },
+        "request": {}
+    },
+    {
+        "data": {
+            "saved_articles": [
+                {
+                    "article_id": "world/2025/dec/30/donald-trump-benjamin-netanyahu-white-house-conference-analysis",
+                    "thumbnail_url": "https://media.guim.co.uk/5b86babb5a68f66556cc58170b5da2fe3a657f73/530_0_5000_4000/500.jpg",
+                    "title": "Trump shows customary disdain for protocol as poker-faced Netanyahu watches on",
+                    "description": "Trump shows customary disdain for protocol as poker-faced Netanyahu watches on",
+                    "_id": "6953a441bd8efad0b0b24f27",
+                    "createdAt": "2025-12-30T10:06:57.968Z",
+                    "updatedAt": "2025-12-30T10:06:57.968Z"
+                }
+            ]
+        },
+        "status": 200,
+        "statusText": "OK",
+        "headers": {
+            "content-length": "522",
+            "content-type": "application/json; charset=utf-8"
+        },
+        "config": {
+            "transitional": {
+                "silentJSONParsing": true,
+                "forcedJSONParsing": true,
+                "clarifyTimeoutError": false
+            },
+            "adapter": [
+                "xhr",
+                "http",
+                "fetch"
+            ],
+            "transformRequest": [
+                null
+            ],
+            "transformResponse": [
+                null
+            ],
+            "timeout": 0,
+            "xsrfCookieName": "XSRF-TOKEN",
+            "xsrfHeaderName": "X-XSRF-TOKEN",
+            "maxContentLength": -1,
+            "maxBodyLength": -1,
+            "env": {},
+            "headers": {
+                "Accept": "application/json, text/plain, */*",
+                "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTRlMmU2NzhhOWI2M2JjNDk3N2Y5OGMiLCJpYXQiOjE3NjcwOTI0MTAsImV4cCI6MTc2NzA5NjAxMH0.zfu-al_9BA9tHm6DjKEehP-10sARGfVM0rRaGcB542c"
+            },
+            "baseURL": "http://localhost:9000",
+            "withCredentials": true,
+            "method": "get",
+            "url": "/api/user/mark-article",
+            "allowAbsoluteUrls": true
+        },
+        "request": {}
+    }
+]

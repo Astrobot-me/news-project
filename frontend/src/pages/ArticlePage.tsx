@@ -37,7 +37,13 @@ export default function ArticlePage(): React.ReactNode {
           return
         }
 
-        setArticle({ ...resp.data?.content, isSaved: resp.data?.isSaved })
+        setArticle(
+          { ...resp.data?.content, 
+            isSaved: resp.data?.isSaved ,
+            isRead: resp.data?.isRead ,
+          
+          }
+        )
 
        
 
@@ -101,7 +107,8 @@ export default function ArticlePage(): React.ReactNode {
     const ENDPOINT = (mode === "save") ? `/api/user/save-article/${encoded_id}` : `/api/user/mark-article/${encoded_id}`; 
 
     try {
-      const res = axiosAuth.delete(ENDPOINT); 
+      const res = await axiosAuth.delete(ENDPOINT);
+      console.log(res) 
       toast.success(res?.data?.message)
 
     } catch (error) {
