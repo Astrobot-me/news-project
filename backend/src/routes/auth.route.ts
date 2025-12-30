@@ -22,4 +22,4 @@ router.post("/logout", handleLogoutController)
 
 
 
-export { router }
+export { router as AuthRouter }

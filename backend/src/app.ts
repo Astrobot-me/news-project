@@ -1,7 +1,8 @@
 import express from 'express'; 
-import { router as ArticleRouter} from './routes/article.route.js';
-import { router as AuthRouter } from './routes/auth.route.js';
-import { router as UserRouter } from './routes/user.route.js';
+import { ArticleRouter} from './routes/article.route.js';
+import { AuthRouter } from './routes/auth.route.js';
+import { UserRouter } from './routes/user.route.js';
+import { AIRouter } from './routes/ai.route.js';
 import morgan from 'morgan'
 import { protect } from './middleware/authMiddleware.js';
 import cors from 'cors'
@@ -35,6 +36,8 @@ app.use(morgan("dev"))
 app.use("/api/auth", AuthRouter)
 app.use("/api/articles",protect, ArticleRouter)
 app.use("/api/user",protect , UserRouter)
+app.use("/api/ai",protect , AIRouter)
+
 
 
 app.get("/", (req, res) => {

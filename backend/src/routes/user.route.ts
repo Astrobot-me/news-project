@@ -33,4 +33,4 @@ router
 .delete(removeReadArticle)
 
 
-export { router }
+export { router as UserRouter}
