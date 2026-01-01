@@ -1,18 +1,26 @@
-import { createClient, type RedisClientType } from "redis";
+import { createClient,  } from "redis";
 
 const client = createClient({ 
-    url: process.env.REDIS_STRING as string
+    // url: process.env.REDIS_STRING as string
+    url : process.env.REDIS_STRING_PROD as string
+
 })
 
 client.on("connect", () =>{ 
-    console.error("[REDIS CLIENT] : Connected Succesfully ")
+    console.log("[REDIS CLIENT] : Connected Succesfully ")
 })
 client.on("ready", () =>{ 
-    console.error("[REDIS CLIENT] : Ready to use")
+    console.log("[REDIS CLIENT] : Ready to use")
 })
 client.on("error", (error) =>{ 
-    console.error("[REDIS CLIENT] : Failed to Connect :", error)
+    console.log("[REDIS CLIENT] : Failed to Connect :", error)
 })
+
+export async function connectRedis() {
+  if (!client.isOpen) {
+    await client.connect();
+  }
+}
 
 
 export default client 

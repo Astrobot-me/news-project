@@ -9,6 +9,7 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser';
 import { apiLimiter } from './services/rateLimiter.js';
 
+
 const app = express() 
 
 
@@ -17,7 +18,7 @@ app.use((req, _res, next) => {
   next();
 });
 
-app.use(apiLimiter)
+
 
 
 app.use(
@@ -30,6 +31,8 @@ app.use(
 );
 
 
+
+app.use(apiLimiter) 
 app.use(express.json()); 
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }));

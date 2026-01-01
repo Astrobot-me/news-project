@@ -1,6 +1,8 @@
 import React from 'react'
 import { Badge } from './ui/badge'
 import { Sparkle } from 'lucide-react'
+import { Button } from './ui/button'
+import { Gemini } from './ui/svgs/gemini'
 
 function AISummary() : React.ReactNode {
   return (
@@ -10,7 +12,11 @@ function AISummary() : React.ReactNode {
             <span> AI Summary</span>
 
         </Badge>
-        <div className="w-48 h-48 rounded-2xl bg-gray-200"></div>
+        
+        <Button variant='secondary'>
+          <span>Generate Summary with Gemini</span> 
+          <Gemini  />
+        </Button>
       </div>
   )
 }
