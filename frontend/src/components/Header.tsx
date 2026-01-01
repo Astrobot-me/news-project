@@ -54,6 +54,11 @@ function Header(): React.ReactNode {
                   Welcome, <span className="font-medium text-foreground">{userData.email}</span>
                 </span>
 
+                <Link to={"/app/saved"}>
+                  <Button variant="link">
+                    Saved Content
+                  </Button>
+                </Link>
                 <Button
                   size="sm"
                   variant="outline"

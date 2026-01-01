@@ -4,7 +4,7 @@ import { generateSummary } from "../controller/ai.controller.js";
 const router = Router();
 
 router.route("/summary")
-.get(generateSummary)
+.post(generateSummary)
 
 export { router as AIRouter};
 

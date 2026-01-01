@@ -163,7 +163,7 @@ export default function ArticlePage(): React.ReactNode {
 
       {/* Utility Section */}
 
-      <AISummary />
+      <AISummary content={article.fields.bodyText} />
 
     </div>
   )
