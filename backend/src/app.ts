@@ -7,15 +7,18 @@ import morgan from 'morgan'
 import { protect } from './middleware/authMiddleware.js';
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
+import { apiLimiter } from './services/rateLimiter.js';
 
 const app = express() 
-
 
 
 app.use((req, _res, next) => {
   console.log("🔥 HIT:", req.method, req.originalUrl);
   next();
 });
+
+app.use(apiLimiter)
+
 
 app.use(
   cors({
