@@ -8,22 +8,41 @@ import ArticlePage from './pages/ArticlePage.tsx'
 import { Provider } from 'react-redux'
 import store from './store/store.ts'
 import AuthChecker from './components/ProtectedRoute.tsx'
+import NewsRoomPage from './pages/NewsRoomPage.tsx'
+import LandingPage from './pages/LandingPage.tsx'
+import SavedArticlePage from './pages/SavedArticlePage.tsx'
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <AuthChecker authentication={true}>
-      <App/>
-    </AuthChecker>,
+    element: <LandingPage />,
     children: [
 
     ]
   },
   {
-    path: "/article/id/:id",
-    element:<AuthChecker authentication={true}>
-      <ArticlePage/>
-    </AuthChecker>
+    path: "app/",
+    element: <App />,
+    children: [
+      {
+        path: "news",
+        element: <AuthChecker authentication={true}>
+          <NewsRoomPage />
+        </AuthChecker>
+      },
+      {
+        path: "saved",
+        element: <AuthChecker authentication={true}>
+          <SavedArticlePage  />
+        </AuthChecker>
+      },
+      {
+        path: "article/id/:id",
+        element: <AuthChecker authentication={true}>
+          <ArticlePage />
+        </AuthChecker>
+      },
+    ]
   }
   ,
   {
@@ -47,8 +66,8 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
-    
-    <RouterProvider router={router} />
+
+      <RouterProvider router={router} />
     </Provider>
   </StrictMode>,
 )

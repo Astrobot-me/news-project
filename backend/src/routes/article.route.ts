@@ -7,4 +7,4 @@ router.get('/top-headlines', getTopHeadlines);
 router.get('/search', getArticlesByQuery);
 router.get('/content', getArticleById);
 
-export { router }; 
+export { router as ArticleRouter}; 

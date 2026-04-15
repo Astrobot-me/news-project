@@ -1,21 +1,40 @@
 import express from 'express'; 
-import { router as ArticleRouter} from './routes/article.route.js';
-import { router as AuthRouter } from './routes/auth.route.js';
-import { router as UserRouter } from './routes/user.route.js';
+import { ArticleRouter} from './routes/article.route.js';
+import { AuthRouter } from './routes/auth.route.js';
+import { UserRouter } from './routes/user.route.js';
+import { AIRouter } from './routes/ai.route.js';
 import morgan from 'morgan'
 import { protect } from './middleware/authMiddleware.js';
 import cors from 'cors'
+import cookieParser from 'cookie-parser';
+import { apiLimiter } from './services/rateLimiter.js';
+
 
 const app = express() 
 
 
+app.use((req, _res, next) => {
+  console.log("🔥 HIT:", req.method, req.originalUrl);
+  next();
+});
 
 
-app.use(cors({ 
-    origin: ["http://localhost:5173", "https://news-project-one-steel.vercel.app"]
-}))
 
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+  })
+);
+
+
+
+app.use(apiLimiter) 
 app.use(express.json()); 
+app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }));
 
 app.use(morgan("dev"))
@@ -23,6 +42,8 @@ app.use(morgan("dev"))
 app.use("/api/auth", AuthRouter)
 app.use("/api/articles",protect, ArticleRouter)
 app.use("/api/user",protect , UserRouter)
+app.use("/api/ai",protect , AIRouter)
+
 
 
 app.get("/", (req, res) => {

@@ -5,11 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { Button } from './ui/button'
-import { useDispatch } from "react-redux"
 import { login as LoginAuth } from '@/store/authSlice'
 import toast from 'react-hot-toast'
-import { BASE_URL } from '@/constant'
-import axios from 'axios'
+import { useAppDispatch } from '@/store/hooks'
+import { simpleAxios } from '@/lib/axiosConfig'
 
 function SignUp(): React.ReactNode {
 
@@ -19,7 +18,7 @@ function SignUp(): React.ReactNode {
   const [password, setPassword] = useState<string>("")
   const [interestTagsInput, setInterestTagsInput] = useState<string>("");
   const [loading, setLoading] = useState(false)
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -40,7 +39,7 @@ function SignUp(): React.ReactNode {
       const payload = { email, password, interest_tags };
 
 
-      const res = await axios.post(`${BASE_URL}/api/auth/register`, payload);
+      const res = await simpleAxios.post(`/api/auth/register`, payload);
 
       // Expected response:
       // {
@@ -55,11 +54,11 @@ function SignUp(): React.ReactNode {
       // Dispatch LoginAuth with the shape your reducer expects:
       dispatch(
         LoginAuth({
-          userData: {
+          
             email: data.email,
             userId: data.userId,
             userToken: data.userToken,
-          },
+          
         })
       );
 

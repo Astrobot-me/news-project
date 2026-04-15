@@ -2,14 +2,14 @@ import { ArrowRight, Loader, Lock, Mail, Newspaper } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
-import { Label } from "./ui/label"; 
+import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { login as LoginAuth } from "@/store/authSlice";
 import { BASE_URL } from "@/constant";
-import axios from "axios";
+import { useAppDispatch } from "@/store/hooks";
+import { simpleAxios } from "@/lib/axiosConfig";
 
 function SignIn(): React.ReactNode {
     const [email, setEmail] = useState<string>("");
@@ -17,11 +17,11 @@ function SignIn(): React.ReactNode {
     const [loading, setLoading] = useState<boolean>(false);
 
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault(); 
+        e.preventDefault();
 
         if (!email || !password) {
             toast.error("Email and password are required");
@@ -34,20 +34,18 @@ function SignIn(): React.ReactNode {
             const payload = { email, password };
 
 
-            const res = await axios.post(`${BASE_URL}/api/auth/login`, payload);
+            const res = await simpleAxios.post(`/api/auth/login`, payload);
 
             const data = res.data;
 
-            localStorage.setItem("userToken", data.userToken);
+            const state = { 
+                email: data.email,
+                userId: data.userId,
+                userToken: data.userToken,
+            }
 
             dispatch(
-                LoginAuth({
-                    userData: {
-                        email: data.email,
-                        userId: data.userId,
-                        userToken: data.userToken,
-                    },
-                })
+                LoginAuth(state)
             );
 
             toast.success(data.message ?? "Logged in successfully");

@@ -1,30 +1,43 @@
 import app from "./app.js";
 import connectDb from "./database.js";
 import dotenv from "dotenv";
+import { connectRedis } from "./services/redis.js";
+// import client from "./services/redis.js";
 
-
-
-
-dotenv.config({ 
-    path: "./.env" 
+dotenv.config({
+	path: "./.env",
 });
 
+const PORT = process.env.SERVER_PORT || 9000;
 
-const PORT = process.env.SERVER_PORT || 9000; 
+async function startApplication() {
+	try {
+		console.log("[STARTING APPLICATION]");
 
+		await connectDb();
+        await connectRedis();
 
-connectDb().then(()=>{
+		app.listen(PORT, () => {
+			console.log(`App is Live on http://localhost:${PORT}`);
+		});
 
-    app.listen(PORT,()=>{
-        console.log(`App is Live on http://localhost:${PORT}`)
-    })
-    
+	} catch (error) {
 
-}).catch((error : any)=>{
-    console.log(error);
-})
+        console.log(error);
+    }
+}
 
-app.listen(PORT, () => { 
+startApplication();
 
-    console.log("Server started on Port")
-})
+// connectDb()
+// 	.then(async () => {
+// 		console.log("[STARTING APPLICATION]");
+// 		//conecting to Redis Client
+
+// 		app.listen(PORT, () => {
+// 			console.log(`App is Live on http://localhost:${PORT}`);
+// 		});
+// 	})
+// 	.catch((error) => {
+// 		console.log(error);
+// 	});

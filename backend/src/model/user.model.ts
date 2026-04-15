@@ -13,35 +13,64 @@ export interface UserType extends Document {
 export interface SavedArticleType extends Document { 
     article_id: string; 
     timestamp: Date;
+    thumbnail_url: string; 
+    title : string; 
+    description: string; 
 }
 
 const SavedArticleSchema = new Schema<SavedArticleType>({
     article_id: {
         type: String,
-        required: true
+        // required: true
     },
-    timestamp: {
-        type: Date,
-        required: true,
-        default: Date.now
+    thumbnail_url : { 
+        type:String, 
+        // required: true, 
+
+    }, 
+    title: { 
+        type:String, 
+        // required: true, 
+    }, 
+    description : { 
+        type: String, 
+        // required : true,  
     }
-});
+}, 
+{ 
+    timestamps:true
+}
+);
 
 export interface ReadArticleType extends Document { 
-    article_id: string; 
+   article_id: string; 
     timestamp: Date;
+    thumbnail_url: string; 
+    title : string; 
+    description: string; 
 }
 
 const ReadArticleSchema = new Schema<ReadArticleType>({
     article_id: {
         type: String,
-        required: true
+        // required: true
     },
-    timestamp: {
-        type: Date,
-        required: true,
-        default: Date.now
+    thumbnail_url : { 
+        type:String, 
+        // required: true, 
+
+    }, 
+    title: { 
+        type:String, 
+        // required: true, 
+    }, 
+    description : { 
+        type: String, 
+        // required : true,  
     }
+}, 
+ { 
+    timestamps: true
 });
 
 

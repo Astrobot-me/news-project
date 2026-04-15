@@ -1,13 +1,12 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router";
-import { useSelector } from "react-redux";
 import Loading from "./Loading";
-import type { RootState } from "../store";
+import { useAppSelector } from "@/store/hooks";
 
 export default function AuthChecker({ children, authentication }) {
 
 
-    const authStatus = useSelector((state: RootState) => state.auth?.status)
+    const authStatus = useAppSelector((state) => state.auth?.status)
 
     const navigate = useNavigate();
 

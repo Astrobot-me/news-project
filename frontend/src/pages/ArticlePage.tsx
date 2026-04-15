@@ -1,75 +1,132 @@
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { Link, useParams } from "react-router"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, User, Calendar, Clock, Share2, Save, CheckCheck } from "lucide-react"
-import Header from "@/components/Header"
-import Footer from "@/components/Footer"
-import { BASE_URL } from "@/constant"
-import modifiedAxios from "@/lib/axiosConfig"
+import Loading from "@/components/Loading"
+import useAxiosMod from "@/hooks/useAxiosMod"
+import ArticleContent from "@/components/ArticleContent"
+import type { Article } from "@/types"
+import AISummary from "@/components/AISummary"
+import toast from "react-hot-toast"
+import { useAppSelector } from "@/store/hooks"
 
 
-export default function ArticlePage() : React.ReactNode {
-  const { id } = useParams() // expecting route like /id/:id
-  const [article, setArticle] = useState(null)
+export default function ArticlePage(): React.ReactNode {
+  const { id } = useParams()
+  const axiosAuth = useAxiosMod()
+
+  const [article, setArticle] = useState<Article>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
+
+  const { status } = useAppSelector((state) => state.auth)
+
 
   useEffect(() => {
-    let cancelled = false
-    async function fetchArticle() { 
+    async function fetchArticle() {
       setLoading(true)
       setError(null)
+
       try {
-        // call backend: GET /api/articles/id/<actual_id>
-        const resp = await modifiedAxios.get(`${BASE_URL}/api/articles/content`, {
-          params: { id }
+        const resp = await axiosAuth.get("/api/articles/content", {
+          params: { id },
         })
 
-        // Expect backend to return the single item object directly in resp.data
-        // If your backend wraps it (e.g. { data: item } or { result: item }), adjust accordingly.
-        const item = resp.data
-
-        if (!item) {
-          if (!cancelled) {
-            setArticle(null)
-            setError("Article not found")
-          }
+        if (!resp.data) {
+          setError("Article not found")
+          setArticle(null)
           return
         }
 
-        if (!cancelled) {
-          setArticle(item)
-        }
+        setArticle(
+          { ...resp.data?.content, 
+            isSaved: resp.data?.isSaved ,
+            isRead: resp.data?.isRead ,
+          
+          }
+        )
+
+       
+
       } catch (err) {
-        console.error("Failed to fetch article:", err)
-        if (!cancelled) {
-          // Provide useful error message; backend may return 404 or other codes
-          setError(
-            err?.response?.status === 404
-              ? "Article not found (404)"
-              : err.message || "Failed to load article"
-          )
-        }
+        console.error(err)
+        setError(
+          err?.response?.status === 404
+            ? "Article not found (404)"
+            : err?.message || "Failed to load article"
+        )
       } finally {
-        if (!cancelled) setLoading(false)
+        setLoading(false)
       }
     }
 
-    fetchArticle()
+    if (status) fetchArticle();
 
-    return () => {
-      cancelled = true
-    }
-  }, [id])
+  }, [id, axiosAuth, status])
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">Loading article…</div>
-      </div>
-    )
+  const handleShare = (webUrl: string) => {
+    navigator.clipboard.writeText(webUrl || window.location.href)
+    toast.success("Url is copied to clipboard")
+
   }
+
+  const handleSave = useCallback(async (articleId: string, mode: "save" | "mark") => {
+
+    if (!status) return;
+
+     console.log(article)
+
+    const ENDPOINT = (mode === "save") ? "/api/user/save-article" : "/api/user/mark-article";
+
+    try {
+      const res = await axiosAuth.post(ENDPOINT, {
+        articleId,
+        thumbnail_url: article.fields.thumbnail,
+        title: article.webTitle,
+        description: article.fields.headline
+
+      })
+
+      toast.success(res?.data?.message)
+
+    } catch (error) {
+      console.error(error)
+      toast.error("Error saving the article")
+    }
+
+  }, [axiosAuth, status, article])
+
+  const handleMarkRead = useCallback(async (articleId: string) => {
+    await handleSave(articleId, "mark")
+  }, [handleSave])
+
+  const handleRemoveSaved = useCallback(async (articleId: string, mode: "save" | "mark") => {
+    if (!status) return;
+    console.log(articleId, mode)
+
+    const encoded_id = encodeURIComponent(articleId)
+    const ENDPOINT = (mode === "save") ? `/api/user/save-article/${encoded_id}` : `/api/user/mark-article/${encoded_id}`; 
+
+    try {
+      const res = await axiosAuth.delete(ENDPOINT);
+      console.log(res) 
+      toast.success(res?.data?.message)
+
+    } catch (error) {
+      console.log(error)
+      toast.error("Error Removing Article")
+    }
+    
+
+  }, [axiosAuth, status]);
+
+  const handleRemoveMarked = useCallback(async (articleId: string) => {
+
+    handleRemoveSaved(articleId, "mark");
+
+  }, [handleRemoveSaved]);
+
+
+  if (loading) return <Loading />
 
   if (error) {
     return (
@@ -98,136 +155,16 @@ export default function ArticlePage() : React.ReactNode {
     )
   }
 
-  // Use selected fields directly (no heavy normalization)
-  const fields = article.fields || {}
-  const title = fields.headline || article.webTitle || ""
-  const author = fields.byline || article.byline || "Unknown"
-  const date = article.webPublicationDate ? new Date(article.webPublicationDate).toLocaleDateString() : article.date || ""
-  const category = article.sectionName || article.sectionId || "Technology"
-  const readTime = fields.wordcount ? Math.max(1, Math.round(Number(fields.wordcount) / 200)) + " min read" : ""
-  const image = fields.thumbnail || "/placeholder.svg"
-
-  // Prefer fields.bodyText for full content; fall back to trailText/standfirst.
-  // Convert a basic HTML body into plain text paragraphs while keeping paragraph breaks.
-  const rawHtml = fields.bodyText || fields.trailText || fields.standfirst || ""
-  const contentText = rawHtml
-    .replace(/<\/p>\s*<p>/gi, "\n\n")
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<[^>]+>/g, "")
-    .trim()
-
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="flex sm:flex-row px-10 max-w-7xl mx-auto gap-5">
 
-      {/* Sticky header with back link */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center">
-          <Link to="/" className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">Back</span>
-          </Link>
-        </div>
-      </header>
+      {/* Article Section  */}
+      <ArticleContent article={article} handleMarkRead={handleMarkRead} handleSave={handleSave} handleShare={handleShare} handleRemoveMarked={handleRemoveMarked} handleRemoveSaved={handleRemoveSaved} />
 
-      <article className="max-w-4xl mx-auto px-4 py-12 md:py-16">
-        {/* Article Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <Badge variant="secondary">{category}</Badge>
-          </div>
+      {/* Utility Section */}
 
-          <h1 className="text-4xl md:text-5xl font-bold text-balance mb-4">{title}</h1>
+      <AISummary content={article.fields.bodyText} />
 
-          <div className="flex flex-wrap gap-6 text-sm text-muted-foreground mb-8">
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4" />
-              <span>{author}</span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              <span>{date}</span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4" />
-              <span>{readTime}</span>
-            </div>
-          </div>
-
-          {/* Article Image */}
-          <div className="relative overflow-hidden rounded-lg bg-muted h-96 mb-8">
-            <img src={image} alt={title} className="w-full h-full object-cover" />
-          </div>
-        </div>
-
-          {/* Share Section */}
-        <div className="border-t border-border pt-8 mb-10">
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">Share this article:</span>
-            <Button variant="outline" size="sm" className="gap-2 bg-transparent" asChild>
-              <a href={article.webUrl || "#"} target="_blank" rel="noopener noreferrer">
-                <Share2 className="w-4 h-4" />
-                Share
-              </a>
-            </Button>
-            <Button variant="outline" size="sm" className="gap-2 bg-transparent" asChild>
-              <a href={article.webUrl || "#"} target="_blank" rel="noopener noreferrer">
-                <Save className="w-4 h-4" />
-                Save this Article
-              </a>
-            </Button>
-            <Button variant="outline" size="sm" className="gap-2 bg-transparent" asChild>
-              <a href={article.webUrl || "#"} target="_blank" rel="noopener noreferrer">
-                <CheckCheck className="w-4 h-4" />
-                Mark as Read
-              </a>
-            </Button>
-          </div>
-        </div>
-
-        {/* Article Content */}
-        <div className="prose prose-sm md:prose-base max-w-none mb-12">
-          {contentText
-            .split(/\n{2,}/)
-            .map((paragraph) => paragraph.trim())
-            .filter(Boolean)
-            .map((paragraph, index) => {
-              // Heading detection (if content uses markdown-like '##' headers)
-              if (paragraph.startsWith("##")) {
-                return (
-                  <h2 key={index} className="text-2xl font-bold mt-8 mb-4">
-                    {paragraph.replace(/^##\s*/, "")}
-                  </h2>
-                )
-              }
-
-              // Bullet list detection: if every line in paragraph starts with "- "
-              if (paragraph.split("\n").every((ln) => ln.trim().startsWith("- "))) {
-                return (
-                  <ul key={index} className="list-disc list-inside space-y-2 mb-4">
-                    {paragraph.split("\n").map((item, i) => (
-                      <li key={i} className="text-foreground">
-                        {item.replace(/^-+\s*/, "")}
-                      </li>
-                    ))}
-                  </ul>
-                )
-              }
-
-              return (
-                <p key={index} className="text-foreground leading-relaxed mb-4">
-                  {paragraph}
-                </p>
-              )
-            })}
-        </div>
-
-      
-      </article>
-
-      <Footer />
     </div>
   )
 }
