@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react"
 import { Link } from "react-router"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import Header from "@/components/Header"
-import Footer from "@/components/Footer"
 import useAxiosMod from "@/hooks/useAxiosMod"
 import { SearchBar } from "@/components/SearchBar"
 
@@ -68,7 +66,7 @@ export default function NewsRoomPage() {
           // Expect backend to return an array in resp.data. Adjust as necessary.
           const raw = resp.data
 
-          const normalized = raw
+            const normalized = raw
             .map(normalizeItem)
             .filter(Boolean)
 
@@ -115,7 +113,13 @@ export default function NewsRoomPage() {
         {/* Main Content */}
         <main className="max-w-6xl mx-auto px-4 py-12">
          
-          <SearchBar/>
+          <SearchBar
+            categories={filters}
+            selectedCategory={selectedFilter}
+            searchQuery={searchQuery}
+            onCategoryChange={setSelectedFilter}
+            onSearchQueryChange={setSearchQuery}
+          />
 
           <div className="mb-8 bg-secondary rounded-lg p-4 flex flex-wrap gap-3">
             {filters.map((filter) => (

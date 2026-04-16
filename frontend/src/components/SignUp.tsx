@@ -64,7 +64,7 @@ function SignUp(): React.ReactNode {
 
       toast.success(data.message || "Registered successfully");
 
-      navigate("/");
+      navigate("/app/news");
 
     } catch (err) {
       const message =
@@ -126,6 +126,19 @@ function SignUp(): React.ReactNode {
                   required
                 />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="interestTags" className="text-sm font-medium">
+                Interest Tags (comma-separated)
+              </Label>
+              <Input
+                id="interestTags"
+                type="text"
+                placeholder="technology, startup, ai"
+                value={interestTagsInput}
+                onChange={(e) => setInterestTagsInput(e.target.value)}
+              />
             </div>
 
 

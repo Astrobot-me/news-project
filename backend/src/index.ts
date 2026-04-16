@@ -15,7 +15,7 @@ async function startApplication() {
 		console.log("[STARTING APPLICATION]");
 
 		await connectDb();
-        await connectRedis();
+        // await connectRedis();
 
 		app.listen(PORT, () => {
 			console.log(`App is Live on http://localhost:${PORT}`);

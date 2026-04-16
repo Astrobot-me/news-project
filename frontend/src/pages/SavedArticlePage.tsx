@@ -1,10 +1,9 @@
 import BriefArticleCard from '@/components/BriefArticleCard'
 import { Spinner } from '@/components/ui/spinner'
+import { Separator } from '@/components/ui/separator'
 import useAxiosMod from '@/hooks/useAxiosMod'
 import { useAppSelector } from '@/store/hooks'
 import type { SavedArticle } from '@/types'
-import { Separator } from '@radix-ui/react-dropdown-menu'
-import { LoaderCircle } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 
@@ -13,8 +12,8 @@ import toast from 'react-hot-toast'
 
 function SavedArticlePage() {
 
-    const [savedArticle, setSavedArticle] = useState<SavedArticle[] | null>(null)
-    const [readArticle, setReadArticle] = useState<SavedArticle[] | null>(null)
+    const [savedArticle, setSavedArticle] = useState<SavedArticle[]>([])
+    const [readArticle, setReadArticle] = useState<SavedArticle[]>([])
     const [loading, setLoading] = useState<boolean>(false)
 
     const { status } = useAppSelector((state) => state.auth)
@@ -77,10 +76,10 @@ function SavedArticlePage() {
                             </div>
                         ) : (
                             <>
-                                {savedArticle && savedArticle.map((article, index) => (
+                                {savedArticle.map((article, index) => (
                                     <BriefArticleCard key={`${index}:${article.article_id}`} article={article} index={index} />
                                 ))}
-                                {!savedArticle && <span className='font-semibold ml-2'>No Saved Content</span>}
+                                {savedArticle.length === 0 && <span className='font-semibold ml-2'>No Saved Content</span>}
                             </>
                         )}
                     </div>
@@ -97,11 +96,11 @@ function SavedArticlePage() {
                             </div>
                         ) : (
                             <>
-                                {readArticle && readArticle.map((article, index) => (
+                                {readArticle.map((article, index) => (
                                     <BriefArticleCard key={`${index}:${article.article_id}`} article={article} index={index} />
 
                                 ))}
-                                {!readArticle && <span className='font-semibold ml-2'>No Saved Content</span>}
+                                {readArticle.length === 0 && <span className='font-semibold ml-2'>No Saved Content</span>}
                             </>
                         )}
                     </div>

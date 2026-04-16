@@ -11,15 +11,13 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
-const workCategories = [
-  "All Work",
-  "Technology",
-  "Design",
-  "React",
-  "Next.js",
-  "TypeScript",
-  "Performance",
-]
+type SearchBarProps = {
+  categories: string[]
+  selectedCategory: string
+  searchQuery: string
+  onCategoryChange: (category: string) => void
+  onSearchQueryChange: (query: string) => void
+}
 
 const aiSuggestions = [
   "How to center a div?",
@@ -30,9 +28,13 @@ const aiSuggestions = [
   "Web design principles",
 ]
 
-export function SearchBar() {
-  const [selectedCategory, setSelectedCategory] = useState("All Work")
-  const [searchQuery, setSearchQuery] = useState("")
+export function SearchBar({
+  categories,
+  selectedCategory,
+  searchQuery,
+  onCategoryChange,
+  onSearchQueryChange,
+}: SearchBarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -57,7 +59,7 @@ export function SearchBar() {
   }
 
   const handleSuggestionClick = (suggestion: string) => {
-    setSearchQuery(suggestion)
+    onSearchQueryChange(suggestion)
     setIsDropdownOpen(false)
   }
 
@@ -77,7 +79,7 @@ export function SearchBar() {
           type="text"
           placeholder="Search with AI: 'How to center a div'..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => onSearchQueryChange(e.target.value)}
           onFocus={() => setIsDropdownOpen(true)}
           className="w-full pl-12 pr-4 py-5 bg-secondary border border-border rounded-lg"
         />
@@ -126,10 +128,10 @@ export function SearchBar() {
         <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuLabel>Filter by Work</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {workCategories.map((category) => (
+          {categories.map((category) => (
             <DropdownMenuItem
               key={category}
-              onClick={() => setSelectedCategory(category)}
+              onClick={() => onCategoryChange(category)}
               className={
                 selectedCategory === category ? "bg-primary/10" : ""
               }

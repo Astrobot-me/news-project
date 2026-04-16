@@ -7,7 +7,6 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import toast from "react-hot-toast";
 import { login as LoginAuth } from "@/store/authSlice";
-import { BASE_URL } from "@/constant";
 import { useAppDispatch } from "@/store/hooks";
 import { simpleAxios } from "@/lib/axiosConfig";
 
@@ -49,7 +48,7 @@ function SignIn(): React.ReactNode {
             );
 
             toast.success(data.message ?? "Logged in successfully");
-            navigate("/");
+            navigate("/app/news");
         } catch (err) {
             console.log(err)
             // const error = err as AxiosError; 

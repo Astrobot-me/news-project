@@ -15,6 +15,7 @@ function Header(): React.ReactNode {
     const userData = useAppSelector((state) => state.auth?.userData);
     const isLoggedIn = Boolean(userData?.email);
     const [loading , setLoading] = useState<boolean>(false); 
+    const homePath = isLoggedIn ? "/app/news" : "/";
     
 
     const handleLogout = async () => {
@@ -22,7 +23,7 @@ function Header(): React.ReactNode {
 
       try {
         setLoading(true)
-        const res = await simpleAxios.post("/api/auth/logout");
+        await simpleAxios.post("/api/auth/logout");
       } catch (error) {
         console.log(error)
       }
@@ -40,9 +41,9 @@ function Header(): React.ReactNode {
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
           
           
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl shrink-0">
+          <Link to={homePath} className="flex items-center gap-2 font-bold text-xl shrink-0">
             <Newspaper className="w-6 h-6 text-primary" />
-            <span>News Project</span>
+            <span>ArticleHub</span>
           </Link>
 
         
@@ -71,7 +72,7 @@ function Header(): React.ReactNode {
                   {
                     loading ? (
                       <div className="flex items-center justify-center">
-                        <LoaderIcon className="animate-spin" size={2}/>
+                        <LoaderIcon className="w-4 h-4 animate-spin" />
                       </div>
                     ) : (
                       <span> Logout </span>

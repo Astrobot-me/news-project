@@ -134,7 +134,7 @@ export default function ArticlePage(): React.ReactNode {
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Error</h1>
           <p className="mb-4 text-red-600">{error}</p>
-          <Link to="/">
+          <Link to="/app/news">
             <Button>Back to Articles</Button>
           </Link>
         </div>
@@ -147,7 +147,7 @@ export default function ArticlePage(): React.ReactNode {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Article not found</h1>
-          <Link to="/">
+          <Link to="/app/news">
             <Button>Back to Articles</Button>
           </Link>
         </div>

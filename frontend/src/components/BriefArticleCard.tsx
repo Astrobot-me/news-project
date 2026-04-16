@@ -73,7 +73,6 @@ function BriefArticleCard({ article, index }: BriefArticleCardProps) : React.Rea
                 <Link
                     to={`/app/article/id/${encodeURIComponent(article.article_id)}`}
                     className="inline-flex items-center gap-2 text-foreground font-semibold hover:text-primary transition-colors group"
-                    target='_blank'
                 >
                     READ MORE
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
